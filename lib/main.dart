@@ -16,13 +16,16 @@ class DonorDarahUserApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DonorDarahApp User',
-      theme: ThemeData(
-        fontFamily: 'Courier', // mirip monospace
-        scaffoldBackgroundColor: const Color(0xFFE0E0E0),
-      ),
       debugShowCheckedModeBanner: false,
-      home: const UserLoginScreen(),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.redAccent,
+        fontFamily: 'Poppins',
+        brightness: Brightness.light,
+      ),
+      initialRoute: '/',
       routes: {
+        '/': (context) => const UserLoginScreen(),
         '/dashboard': (context) => const UserDashboardScreen(),
         '/jadwal': (context) => const UserJadwalScreen(),
         '/riwayat': (context) => const UserRiwayatScreen(),

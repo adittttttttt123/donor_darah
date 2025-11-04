@@ -1,44 +1,50 @@
-import 'package:donor_darah/screens/widgets/user_navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:donor_darah/screens/widgets/user_navbar.dart';
 
 class UserJadwalScreen extends StatelessWidget {
   const UserJadwalScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final jadwalList = [
+      {"tempat": "PMI Boyolali", "tanggal": "10 Desember 2025"},
+      {"tempat": "RSUD Pandan Arang", "tanggal": "15 Desember 2025"},
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Jadwal Donor"),
-        backgroundColor: Colors.redAccent,
         centerTitle: true,
+        backgroundColor: Colors.redAccent,
+        foregroundColor: Colors.white,
       ),
       bottomNavigationBar: const UserNavBar(currentIndex: 1),
-      body: ListView(
+      body: ListView.builder(
         padding: const EdgeInsets.all(20),
-        children: [
-          _jadwalCard(
-              "PMI Boyolali", "10 Desember 2025", "📍 Jl. Pandanaran No.12"),
-          _jadwalCard(
-              "RSUD Pandan Arang", "15 Desember 2025", "📍 Boyolali Kota"),
-        ],
-      ),
-    );
-  }
-
-  Widget _jadwalCard(String lokasi, String tanggal, String alamat) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: ListTile(
-        title: Text(lokasi, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('$tanggal\n$alamat'),
-        trailing: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.redAccent,
-          ),
-          onPressed: () {},
-          child: const Text("Daftar"),
-        ),
+        itemCount: jadwalList.length,
+        itemBuilder: (context, index) {
+          final item = jadwalList[index];
+          return Card(
+            elevation: 3,
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ListTile(
+              title: Text(item["tempat"]!,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(item["tanggal"]!),
+              trailing: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {},
+                child: const Text("Daftar"),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
