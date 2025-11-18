@@ -22,6 +22,7 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
 
   // Gambar profil
   Uint8List? _imageBytes;
+  // ignore: unused_field
   String? _imagePath;
 
   final List<String> _daftarAlamat = [
@@ -61,6 +62,7 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
+                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.08),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
@@ -280,7 +282,7 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
       final bytes = await file.readAsBytes();
       setState(() {
         _imageBytes = bytes;
-         = file.name;
+        _imagePath = file.name;
       });
     }
   }

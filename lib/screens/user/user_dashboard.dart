@@ -34,6 +34,7 @@ class UserDashboardScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ListTile(
         leading: CircleAvatar(
+          // ignore: deprecated_member_use
           backgroundColor: Colors.redAccent.withOpacity(0.15),
           child: Icon(icon, color: Colors.redAccent),
         ),

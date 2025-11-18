@@ -15,6 +15,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   void _login() {
     setState(() => _isLoading = true);
     Future.delayed(const Duration(seconds: 1), () {
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/dashboard');
     });
   }
@@ -32,6 +33,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.redAccent.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
