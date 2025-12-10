@@ -36,6 +36,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.redAccent.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),

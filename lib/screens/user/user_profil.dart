@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'user_edit_profil.dart';
 
 class UserProfilScreen extends StatelessWidget {
@@ -8,13 +9,22 @@ class UserProfilScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
+
+      // APPBAR DENGAN TOMBOL GETX
       appBar: AppBar(
         title: const Text("Profil Pengguna"),
         centerTitle: true,
         elevation: 4,
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Get.offNamed('/dashboard'); // Kembali ke halaman dashboard
+          },
+        ),
       ),
+
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30),
@@ -26,16 +36,17 @@ class UserProfilScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
-                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.08),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
               ],
             ),
+
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // FOTO PROFIL
                 const CircleAvatar(
                   radius: 60,
                   backgroundImage: NetworkImage(
@@ -43,6 +54,8 @@ class UserProfilScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+
+                // NAMA
                 const Text(
                   "Aditya Putra",
                   style: TextStyle(
@@ -52,6 +65,8 @@ class UserProfilScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
+
+                // GOLONGAN DARAH
                 const Text(
                   "Golongan Darah: A+",
                   style: TextStyle(
@@ -59,23 +74,21 @@ class UserProfilScreen extends StatelessWidget {
                     color: Colors.black54,
                   ),
                 ),
+
                 const SizedBox(height: 25),
                 const Divider(height: 30, thickness: 1.2),
 
-                // Detail Info
+                // DETAIL INFORMASI
                 _infoTile(Icons.phone_android, "Nomor HP", "08123456789"),
                 _infoTile(Icons.home, "Alamat", "Boyolali, Jawa Tengah"),
                 _infoTile(Icons.calendar_month, "Tanggal Lahir", "20 Juni 2003"),
 
                 const SizedBox(height: 25),
+
+                // TOMBOL EDIT PROFIL
                 FilledButton.icon(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UserEditProfilScreen(),
-                      ),
-                    );
+                    Get.to(() => const UserEditProfilScreen());
                   },
                   icon: const Icon(Icons.edit),
                   label: const Text("Edit Profil"),
@@ -89,10 +102,11 @@ class UserProfilScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 15),
+
+                // TOMBOL LOGOUT
                 OutlinedButton.icon(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/', (route) => false);
+                    Get.offAllNamed('/'); // kembali ke login
                   },
                   icon: const Icon(Icons.logout),
                   label: const Text("Keluar Akun"),
@@ -113,6 +127,7 @@ class UserProfilScreen extends StatelessWidget {
     );
   }
 
+  // === Widget Helper ===
   static Widget _infoTile(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -121,7 +136,6 @@ class UserProfilScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFF9FAFB),
           borderRadius: BorderRadius.circular(12),
-          // ignore: deprecated_member_use
           border: Border.all(color: Colors.grey.withOpacity(0.2)),
         ),
         child: Row(
