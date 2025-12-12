@@ -10,7 +10,6 @@ class UserProfilScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
 
-      // APPBAR DENGAN TOMBOL GETX
       appBar: AppBar(
         title: const Text("Profil Pengguna"),
         centerTitle: true,
@@ -20,7 +19,7 @@ class UserProfilScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Get.offNamed('/dashboard'); // Kembali ke halaman dashboard
+            Get.offNamed('/dashboard');
           },
         ),
       ),
@@ -46,7 +45,6 @@ class UserProfilScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // FOTO PROFIL
                 const CircleAvatar(
                   radius: 60,
                   backgroundImage: NetworkImage(
@@ -55,9 +53,9 @@ class UserProfilScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // NAMA
+                // NAMA — dikosongkan
                 const Text(
-                  "Aditya Putra",
+                  "",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -66,9 +64,9 @@ class UserProfilScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
 
-                // GOLONGAN DARAH
+                // GOLONGAN DARAH — dikosongkan
                 const Text(
-                  "Golongan Darah: A+",
+                  "",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black54,
@@ -78,14 +76,13 @@ class UserProfilScreen extends StatelessWidget {
                 const SizedBox(height: 25),
                 const Divider(height: 30, thickness: 1.2),
 
-                // DETAIL INFORMASI
-                _infoTile(Icons.phone_android, "Nomor HP", "08123456789"),
-                _infoTile(Icons.home, "Alamat", "Boyolali, Jawa Tengah"),
-                _infoTile(Icons.calendar_month, "Tanggal Lahir", "20 Juni 2003"),
+                // DETAIL INFORMASI — dikosongkan
+                _infoTile(Icons.phone_android, "Nomor HP", ""),
+                _infoTile(Icons.home, "Alamat", ""),
+                _infoTile(Icons.calendar_month, "Tanggal Lahir", ""),
 
                 const SizedBox(height: 25),
 
-                // TOMBOL EDIT PROFIL
                 FilledButton.icon(
                   onPressed: () {
                     Get.to(() => const UserEditProfilScreen());
@@ -103,10 +100,9 @@ class UserProfilScreen extends StatelessWidget {
 
                 const SizedBox(height: 15),
 
-                // TOMBOL LOGOUT
                 OutlinedButton.icon(
                   onPressed: () {
-                    Get.offAllNamed('/'); // kembali ke login
+                    Get.offAllNamed('/');
                   },
                   icon: const Icon(Icons.logout),
                   label: const Text("Keluar Akun"),
@@ -127,7 +123,6 @@ class UserProfilScreen extends StatelessWidget {
     );
   }
 
-  // === Widget Helper ===
   static Widget _infoTile(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
