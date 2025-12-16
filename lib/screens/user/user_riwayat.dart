@@ -18,7 +18,7 @@ class UserRiwayatScreen extends StatelessWidget {
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
       ),
-      bottomNavigationBar: const UserNavbar(currentIndex: 2),
+      bottomNavigationBar: const UserNavBar(currentIndex: 2),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
         itemCount: riwayat.length,

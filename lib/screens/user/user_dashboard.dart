@@ -13,7 +13,7 @@ class UserDashboardScreen extends StatelessWidget {
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
       ),
-      bottomNavigationBar: const UserNavbar(currentIndex: 0),
+      bottomNavigationBar: const UserNavBar(currentIndex: 0),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

@@ -18,7 +18,7 @@ class UserJadwalScreen extends StatelessWidget {
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
       ),
-      bottomNavigationBar: const UserNavbar(currentIndex: 1),
+      bottomNavigationBar: const UserNavBar(currentIndex: 1),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
         itemCount: jadwalList.length,
