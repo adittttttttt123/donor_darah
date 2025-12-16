@@ -1,35 +1,24 @@
 import 'package:flutter/material.dart';
 import 'screens/user/user_login.dart';
-import 'screens/user/user_dashboard.dart';
-import 'screens/user/user_jadwal.dart';
-import 'screens/user/user_riwayat.dart';
-import 'screens/user/user_profil.dart';
+import 'screens/user/user_register.dart';
+import 'screens/widgets/user_navbar.dart';
 
 void main() {
-  runApp(const DonorDarahUserApp());
+  runApp(const MyApp());
 }
 
-class DonorDarahUserApp extends StatelessWidget {
-  const DonorDarahUserApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'DonorDarahApp User',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.redAccent,
-        fontFamily: 'Poppins',
-        brightness: Brightness.light,
-      ),
-      initialRoute: '/',
+      initialRoute: '/user_login',
       routes: {
-        '/': (context) => const UserLoginScreen(),
-        '/dashboard': (context) => const UserDashboardScreen(),
-        '/jadwal': (context) => const UserJadwalScreen(),
-        '/riwayat': (context) => const UserRiwayatScreen(),
-        '/profil': (context) => const UserProfilScreen(),
+        '/user_login': (context) => const UserLoginScreen(),
+        '/user_register': (context) => const UserRegisterScreen(),
+        '/user_navbar': (context) => const UserNavbar(currentIndex: 0),
       },
     );
   }

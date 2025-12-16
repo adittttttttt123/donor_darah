@@ -1,33 +1,53 @@
+import 'package:donor_darah/screens/user/user_dashboard.dart';
+import 'package:donor_darah/screens/user/user_jadwal.dart';
+import 'package:donor_darah/screens/user/user_profil.dart';
+import 'package:donor_darah/screens/user/user_riwayat.dart';
 import 'package:flutter/material.dart';
 
-class UserNavBar extends StatelessWidget {
+class UserNavbar extends StatefulWidget {
   final int currentIndex;
-  const UserNavBar({super.key, required this.currentIndex});
+  const UserNavbar({super.key, required this.currentIndex});
+
+  @override
+  State<UserNavbar> createState() => _UserNavbarState();
+}
+
+class _UserNavbarState extends State<UserNavbar> {
+  late int _currentIndex;
+
+  final List<Widget> _pages = const [
+    UserDashboardScreen(),
+    UserJadwalScreen(),
+    UserRiwayatScreen(),
+    UserProfilScreen(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      {'icon': Icons.home_rounded, 'label': 'Beranda', 'route': '/dashboard'},
-      {'icon': Icons.event_rounded, 'label': 'Jadwal', 'route': '/jadwal'},
-      {'icon': Icons.history_rounded, 'label': 'Riwayat', 'route': '/riwayat'},
-      {'icon': Icons.person_rounded, 'label': 'Profil', 'route': '/profil'},
-    ];
-
-    return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: (index) {
-        if (index != currentIndex) {
-          Navigator.pushReplacementNamed(context, items[index]['route'] as String);
-        }
-      },
-      destinations: items
-          .map(
-            (e) => NavigationDestination(
-              icon: Icon(e['icon'] as IconData),
-              label: e['label'] as String,
-            ),
-          )
-          .toList(),
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.redAccent,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Jadwal'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Riwayat'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        ],
+      ),
     );
   }
 }

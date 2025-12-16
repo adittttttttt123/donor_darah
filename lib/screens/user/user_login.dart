@@ -10,12 +10,12 @@ class UserLoginScreen extends StatefulWidget {
 class _UserLoginScreenState extends State<UserLoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool _isLoading = false;
+  bool isLoading = false;
 
-  void _login() {
-    setState(() => _isLoading = true);
+  void login() {
+    setState(() => isLoading = true);
+
     Future.delayed(const Duration(seconds: 1), () {
-      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/dashboard');
     });
   }
@@ -24,8 +24,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 500),
+        child: Container(
           width: 380,
           padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(
@@ -33,7 +32,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                // ignore: deprecated_member_use
                 color: Colors.redAccent.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
@@ -43,11 +41,11 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.bloodtype_rounded,
+              const Icon(Icons.bloodtype,
                   size: 80, color: Colors.redAccent),
               const SizedBox(height: 10),
               const Text(
-                "DonorDarahApp",
+                'DonorDarahApp',
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -57,10 +55,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: "Email",
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  border:
-                      OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  labelText: 'Email',
+                  prefixIcon: const Icon(Icons.email),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               const SizedBox(height: 15),
@@ -68,30 +66,31 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  border:
-                      OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
               const SizedBox(height: 25),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
-                onPressed: _isLoading ? null : _login,
-                child: _isLoading
+                onPressed: isLoading ? null : login,
+                child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text("Masuk"),
+                    : const Text('Masuk'),
               ),
               const SizedBox(height: 15),
               TextButton(
-                onPressed: () {},
-                child: const Text("Belum punya akun? Daftar di sini"),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/user_register');
+                },
+                child: const Text('Belum punya akun? Daftar'),
               ),
             ],
           ),
