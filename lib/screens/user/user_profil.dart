@@ -119,24 +119,6 @@ class UserProfilScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 15),
-
-                OutlinedButton.icon(
-                  onPressed: () {
-                    Get.offAllNamed('/');
-                  },
-                  icon: const Icon(Icons.logout),
-                  label: const Text("Keluar Akun"),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primaryColor,
-                    side: const BorderSide(color: AppTheme.primaryColor),
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

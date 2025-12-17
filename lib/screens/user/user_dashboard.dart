@@ -48,12 +48,14 @@ class UserDashboardScreen extends StatelessWidget {
                       ActionGridItem(
                         icon: Icons.location_on,
                         label: "Lokasi Unit",
-                        onTap: () {}, // TODO: Implement map
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/lokasi_unit'),
                       ),
                       ActionGridItem(
                         icon: Icons.card_membership,
                         label: "Kartu Donor",
-                        onTap: () {}, // TODO: Implement card
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/kartu_donor'),
                       ),
                     ],
                   ),
@@ -92,7 +94,6 @@ class UserDashboardScreen extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _buildStockTicker(),
                 ],
               ),
             ),
@@ -299,26 +300,6 @@ class UserDashboardScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             child: const Text("Tutup"),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStockTicker() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Stok Darah Kritis: AB-",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          Icon(Icons.warning_amber, color: Colors.white),
         ],
       ),
     );

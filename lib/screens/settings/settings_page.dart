@@ -85,6 +85,19 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
+          _buildSettingsItem(
+            icon: Icons.logout,
+            title: "Keluar Akun",
+            onTap: () {
+              // Using Get.offAllNamed since GetX is used elsewhere,
+              // or Navigator.pushNamedAndRemoveUntil if Get context is tricky,
+              // but project seems to use Get generally or mixed.
+              // The profile page used Get.offAllNamed('/').
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil('/', (route) => false);
+            },
+          ),
         ],
       ),
     );

@@ -10,6 +10,8 @@ import 'screens/user/user_riwayat.dart';
 import 'screens/user/user_profil.dart';
 import 'screens/settings/settings_page.dart';
 import 'screens/user/user_daftar_donor.dart';
+import 'screens/user/user_kartu_donor.dart';
+import 'screens/user/user_lokasi_unit.dart';
 import 'screens/admin/login_admin_page.dart';
 import 'screens/admin/dashboard_admin_page.dart';
 import 'screens/admin/data_pendonor_page.dart';
@@ -53,6 +55,8 @@ class DonorDarahUserApp extends StatelessWidget {
         '/profil': (context) => const UserProfilScreen(),
         '/settings': (context) => const SettingsPage(),
         '/daftar_donor': (context) => const UserDaftarDonorScreen(),
+        '/kartu_donor': (context) => const UserKartuDonorScreen(),
+        '/lokasi_unit': (context) => const UserLokasiUnitScreen(),
         '/admin_login': (context) => const LoginAdminPage(),
         '/admin/dashboard': (context) => const DashboardAdminPage(),
         '/admin/pendonor': (context) => const DataPendonorPage(),
