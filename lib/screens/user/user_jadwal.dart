@@ -12,12 +12,7 @@ class UserJadwalScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Jadwal Donor"),
-        centerTitle: true,
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text("Jadwal Donor"), centerTitle: true),
       bottomNavigationBar: const UserNavBar(currentIndex: 1),
       body: ListView.builder(
         padding: const EdgeInsets.all(20),
@@ -27,17 +22,21 @@ class UserJadwalScreen extends StatelessWidget {
           return Card(
             elevation: 3,
             margin: const EdgeInsets.symmetric(vertical: 10),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: ListTile(
-              title: Text(item["tempat"]!,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                item["tempat"]!,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               subtitle: Text(item["tanggal"]!),
               trailing: FilledButton(
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 onPressed: () {},
                 child: const Text("Daftar"),

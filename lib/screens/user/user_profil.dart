@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'user_edit_profil.dart';
+import '../../controllers/user_controller.dart';
+import '../../core/app_theme.dart';
 
 class UserProfilScreen extends StatelessWidget {
   const UserProfilScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(UserController());
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
 
@@ -14,7 +18,7 @@ class UserProfilScreen extends StatelessWidget {
         title: const Text("Profil Pengguna"),
         centerTitle: true,
         elevation: 4,
-        backgroundColor: Colors.redAccent,
+        backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -45,31 +49,34 @@ class UserProfilScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircleAvatar(
-                  radius: 60,
-                  backgroundImage: NetworkImage(
-                    "https://cdn-icons-png.flaticon.com/512/9131/9131529.png",
+                Obx(
+                  () => CircleAvatar(
+                    radius: 60,
+                    backgroundImage: controller.profileImageBytes.value != null
+                        ? MemoryImage(controller.profileImageBytes.value!)
+                        : NetworkImage(controller.profileImage.value)
+                              as ImageProvider,
                   ),
                 ),
                 const SizedBox(height: 20),
 
                 // NAMA — dikosongkan
-                const Text(
-                  "",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Obx(
+                  () => Text(
+                    controller.nama.value,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
 
-                // GOLONGAN DARAH — dikosongkan
-                const Text(
-                  "",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
+                Obx(
+                  () => Text(
+                    "Golongan Darah: ${controller.golDarah.value}",
+                    style: const TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                 ),
 
@@ -77,9 +84,24 @@ class UserProfilScreen extends StatelessWidget {
                 const Divider(height: 30, thickness: 1.2),
 
                 // DETAIL INFORMASI — dikosongkan
-                _infoTile(Icons.phone_android, "Nomor HP", ""),
-                _infoTile(Icons.home, "Alamat", ""),
-                _infoTile(Icons.calendar_month, "Tanggal Lahir", ""),
+                Obx(
+                  () => _infoTile(
+                    Icons.phone_android,
+                    "Nomor HP",
+                    controller.noHp.value,
+                  ),
+                ),
+                Obx(
+                  () =>
+                      _infoTile(Icons.home, "Alamat", controller.alamat.value),
+                ),
+                Obx(
+                  () => _infoTile(
+                    Icons.calendar_month,
+                    "Tanggal Lahir",
+                    controller.tglLahir.value,
+                  ),
+                ),
 
                 const SizedBox(height: 25),
 
@@ -90,7 +112,7 @@ class UserProfilScreen extends StatelessWidget {
                   icon: const Icon(Icons.edit),
                   label: const Text("Edit Profil"),
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
+                    backgroundColor: AppTheme.primaryColor,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -107,8 +129,8 @@ class UserProfilScreen extends StatelessWidget {
                   icon: const Icon(Icons.logout),
                   label: const Text("Keluar Akun"),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.redAccent,
-                    side: const BorderSide(color: Colors.redAccent),
+                    foregroundColor: AppTheme.primaryColor,
+                    side: const BorderSide(color: AppTheme.primaryColor),
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -135,22 +157,24 @@ class UserProfilScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.redAccent),
+            Icon(icon, color: AppTheme.primaryColor),
             const SizedBox(width: 15),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label,
-                      style: const TextStyle(
-                          fontSize: 13, color: Colors.black54)),
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     value,
                     style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
                   ),
                 ],
               ),

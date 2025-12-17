@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/app_theme.dart';
 import 'screens/user/user_login.dart';
 import 'screens/user/user_dashboard.dart';
 import 'screens/user/user_jadwal.dart';
@@ -17,12 +18,7 @@ class DonorDarahUserApp extends StatelessWidget {
     return MaterialApp(
       title: 'DonorDarahApp User',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.redAccent,
-        fontFamily: 'Poppins',
-        brightness: Brightness.light,
-      ),
+      theme: AppTheme.lightTheme,
       initialRoute: '/',
       routes: {
         '/': (context) => const UserLoginScreen(),

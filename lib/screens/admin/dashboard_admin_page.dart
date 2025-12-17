@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/app_theme.dart';
+import '../../widgets/stat_card.dart';
 
 class DashboardAdminPage extends StatefulWidget {
   const DashboardAdminPage({super.key});
@@ -8,7 +10,7 @@ class DashboardAdminPage extends StatefulWidget {
 }
 
 class _DashboardAdminPageState extends State<DashboardAdminPage> {
-  // Mock data (ganti dengan fetch dari API / Firebase)
+  // Mock data
   final Map<String, int> stokDarah = {
     'A+': 40,
     'A-': 12,
@@ -37,129 +39,318 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
   int pendonorAktif = 120;
   int eventAktif = 3;
 
-  Widget _buildStatCard(String title, String value, IconData icon) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 26,
-              backgroundColor: Colors.red.shade50,
-              child: Icon(icon, size: 28, color: Colors.red),
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isDesktop = width >= 900;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard Admin'),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
+          const SizedBox(width: 8),
+          const CircleAvatar(
+            backgroundColor: Colors.white24,
+            child: Text('A', style: TextStyle(color: Colors.white)),
+          ),
+          const SizedBox(width: 16),
+        ],
+      ),
+      drawer: isDesktop ? null : Drawer(child: _buildSidebar(context)),
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isDesktop) _buildSidebar(context),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Overview",
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildStatsGrid(width),
+                  const SizedBox(height: 24),
+                  if (width > 1200)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(flex: 2, child: _buildStokTable()),
+                        const SizedBox(width: 24),
+                        Expanded(flex: 1, child: _buildPendonorList()),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: [
+                        _buildStokTable(),
+                        const SizedBox(height: 24),
+                        _buildPendonorList(),
+                      ],
+                    ),
+                  const SizedBox(height: 24),
+                  _buildJadwalList(),
+                ],
+              ),
             ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSidebar(BuildContext context) {
+    return Container(
+      width: 250,
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            alignment: Alignment.centerLeft,
+            color: AppTheme.primaryColor.withOpacity(0.05),
+            child: Row(
               children: [
-                Text(title,
-                    style: const TextStyle(fontSize: 13, color: Colors.black54)),
-                const SizedBox(height: 6),
-                Text(value,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                Icon(Icons.bloodtype, color: AppTheme.primaryColor, size: 32),
+                const SizedBox(width: 12),
+                const Text(
+                  'Donor Darah',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
-          ],
+          ),
+          const SizedBox(height: 12),
+          _sidebarItem(Icons.dashboard, 'Dashboard', isActive: true),
+          _sidebarItem(Icons.people, 'Data Pendonor'),
+          _sidebarItem(Icons.inventory_2, 'Stok Darah'),
+          _sidebarItem(Icons.event, 'Jadwal Donor'),
+          const Spacer(),
+          const Divider(),
+          _sidebarItem(Icons.logout, 'Logout', color: Colors.red),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _sidebarItem(
+    IconData icon,
+    String title, {
+    bool isActive = false,
+    Color? color,
+  }) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: color ?? (isActive ? AppTheme.primaryColor : Colors.grey),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: color ?? (isActive ? AppTheme.primaryColor : Colors.grey[700]),
+          fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
         ),
       ),
+      selected: isActive,
+      selectedTileColor: AppTheme.primaryColor.withOpacity(0.05),
+      dense: true,
+      onTap: () {},
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(30)),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+    );
+  }
+
+  Widget _buildStatsGrid(double screenWidth) {
+    int crossAxisCount = screenWidth > 1100 ? 4 : (screenWidth > 600 ? 2 : 1);
+
+    return GridView.count(
+      crossAxisCount: crossAxisCount,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      childAspectRatio: 1.5, // Make cards shorter
+      children: [
+        StatCard(
+          title: 'Total Pendonor',
+          value: totalPendonor.toString(),
+          icon: Icons.people,
+        ),
+        StatCard(
+          title: 'Pendonor Aktif',
+          value: pendonorAktif.toString(),
+          icon: Icons.favorite,
+          color: Colors.pink,
+        ),
+        StatCard(
+          title: 'Event Bulan Ini',
+          value: eventAktif.toString(),
+          icon: Icons.calendar_today,
+          color: Colors.orange,
+        ),
+        StatCard(
+          title: 'Total Stok (Kantong)',
+          value: stokDarah.values.reduce((a, b) => a + b).toString(),
+          icon: Icons.local_hospital,
+          color: Colors.teal,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: AppTheme.primaryColor),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 
   Widget _buildStokTable() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Stok Darah',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _buildSectionHeader(
+              'Monitoring Stok Darah',
+              Icons.inventory,
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
-                columnSpacing: 24,
+                headingRowHeight: 40,
+                dataRowMinHeight: 40,
+                dataRowMaxHeight: 52,
                 columns: const [
-                  DataColumn(label: Text('Golongan')),
-                  DataColumn(label: Text('Stok (kantong)')),
+                  DataColumn(label: Text('Golongan Darah')),
+                  DataColumn(label: Text('Jumlah Stok')),
                   DataColumn(label: Text('Status')),
                 ],
                 rows: stokDarah.entries.map((e) {
-                  final g = e.key;
-                  final s = e.value;
-                  final status = s >= 50
+                  final status = e.value >= 20
                       ? 'Aman'
-                      : (s >= 15 ? 'Perhatian' : 'Kritis');
+                      : (e.value >= 10 ? 'Menipis' : 'Kritis');
+                  final color = e.value >= 20
+                      ? Colors.green
+                      : (e.value >= 10 ? Colors.orange : Colors.red);
 
-                  Color statusColor;
-                  if (status == 'Aman') statusColor = Colors.green;
-                  else if (status == 'Perhatian') statusColor = Colors.orange;
-                  else statusColor = Colors.red;
-
-                  return DataRow(cells: [
-                    DataCell(Text(g)),
-                    DataCell(Text(s.toString())),
-                    DataCell(Row(
-                      children: [
-                        Icon(Icons.circle, size: 12, color: statusColor),
-                        const SizedBox(width: 8),
-                        Text(status),
-                      ],
-                    )),
-                  ]);
+                  return DataRow(
+                    cells: [
+                      DataCell(
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            e.key,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      DataCell(
+                        Text(
+                          '${e.value} Kantong',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      DataCell(
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.circle, size: 10, color: color),
+                            const SizedBox(width: 6),
+                            Text(
+                              status,
+                              style: TextStyle(
+                                color: color,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
                 }).toList(),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildPendonorList() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Pendonor Terbaru',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ...pendonorTerbaru.map((p) {
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(child: Text(p['nama']![0])),
-                title: Text(p['nama']!),
-                subtitle: Text('Gol: ${p['golongan']} — Terakhir: ${p['terakhir']}'),
-                trailing: TextButton(
-                  onPressed: () {
-                    // detail pendonor
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text(p['nama']!),
-                        content: Text('Detail pendonor (mock).'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Tutup'),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Text('Detail'),
-                ),
-              );
-            }).toList(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildSectionHeader('Pendonor Terbaru', Icons.history),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text("Lihat Semua"),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: pendonorTerbaru.length,
+              separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+              itemBuilder: (context, index) {
+                final item = pendonorTerbaru[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                    child: Text(
+                      item['nama']![0],
+                      style: const TextStyle(color: AppTheme.primaryColor),
+                    ),
+                  ),
+                  title: Text(
+                    item['nama']!,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text("${item['golongan']} • ${item['terakhir']}"),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14,
+                    color: Colors.grey,
+                  ),
+                  onTap: () {},
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -168,199 +359,57 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
 
   Widget _buildJadwalList() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Jadwal Donor Terdekat',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ...jadwalDonor.map((j) {
-              return ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(j['lokasi']!),
-                subtitle: Text('${j['tanggal']} • ${j['jam']}'),
-                trailing: ElevatedButton(
-                  onPressed: () {
-                    // contoh edit / detail
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Kelola jadwal: ${j['lokasi']}')),
-                    );
-                  },
-                  child: const Text('Kelola'),
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSidebar() {
-    return Container(
-      width: 220,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(8),
-      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 6),
-          const Text('Donor Darah',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          const SizedBox(height: 18),
-          _sidebarItem(Icons.dashboard, 'Dashboard', onTap: () {}),
-          _sidebarItem(Icons.people, 'Data Pendonor', onTap: () {}),
-          _sidebarItem(Icons.inventory_2, 'Stok Darah', onTap: () {}),
-          _sidebarItem(Icons.event, 'Jadwal Donor', onTap: () {}),
-          const Spacer(),
-          const Divider(),
-          TextButton.icon(
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            icon: const Icon(Icons.logout),
-            label: const Text('Logout'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _buildSectionHeader(
+              'Jadwal Kegiatan',
+              Icons.event_available,
+            ),
+          ),
+          const Divider(height: 1),
+          // Using a simple list here for brevity, could be a grid or table
+          ...jadwalDonor.map(
+            (j) => ListTile(
+              leading: divContainer(
+                child: const Icon(Icons.calendar_month, color: Colors.blue),
+              ),
+              title: Text(
+                j['lokasi']!,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text("${j['tanggal']} • ${j['jam']}"),
+              trailing: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.edit, size: 16),
+                label: const Text("Atur"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue.shade50,
+                  foregroundColor: Colors.blue,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _sidebarItem(IconData icon, String title, {VoidCallback? onTap}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.red),
-      title: Text(title),
-      onTap: onTap,
-      dense: true,
-      visualDensity: const VisualDensity(vertical: -3),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final isDesktop = width >= 900;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Admin Donor Darah'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.notifications_none),
-                ),
-                const SizedBox(width: 6),
-                CircleAvatar(child: Text('A')),
-                const SizedBox(width: 12),
-              ],
-            ),
-          )
-        ],
+  Widget divContainer({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(8),
       ),
-      drawer: isDesktop ? null : Drawer(child: _buildSidebar()),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: isDesktop
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Sidebar
-                  _buildSidebar(),
-                  const SizedBox(width: 16),
-                  // Main content
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          // Statistics row
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: _buildStatCard(
-                                      'Total Pendonor', '$totalPendonor', Icons.people)),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                  child: _buildStatCard('Pendonor Aktif', '$pendonorAktif',
-                                      Icons.bloodtype)),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                  child: _buildStatCard(
-                                      'Event Aktif', '$eventAktif', Icons.event)),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                  child: _buildStatCard('Stok Total',
-                                      '${stokDarah.values.reduce((a, b) => a + b)}', Icons.storage)),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Grid: left stok + jadwal (two column)
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Column(
-                                  children: [
-                                    _buildStokTable(),
-                                    const SizedBox(height: 12),
-                                    _buildJadwalList(),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                flex: 1,
-                                child: Column(
-                                  children: [
-                                    _buildPendonorList(),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : // Mobile layout: single column
-            SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                            child: _buildStatCard(
-                                'Total Pendonor', '$totalPendonor', Icons.people)),
-                        const SizedBox(width: 8),
-                        Expanded(
-                            child: _buildStatCard(
-                                'Pendonor Aktif', '$pendonorAktif', Icons.bloodtype)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _buildStokTable(),
-                    const SizedBox(height: 12),
-                    _buildPendonorList(),
-                    const SizedBox(height: 12),
-                    _buildJadwalList(),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-      ),
+      child: child,
     );
   }
 }
