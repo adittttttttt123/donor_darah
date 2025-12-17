@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/app_theme.dart';
 
 class LoginAdminPage extends StatefulWidget {
   const LoginAdminPage({super.key});
@@ -14,8 +15,8 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
   bool _isLoading = false;
   bool _obscurePass = true;
 
-  String adminEmail = "admin@donordarah.com";
-  String adminPass = "admin123";
+  String adminEmail = "admin";
+  String adminPass = "admin";
 
   void _login() {
     if (_formKey.currentState!.validate()) {
@@ -27,7 +28,7 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
             const SnackBar(content: Text("Login Admin Berhasil ✅")),
           );
 
-          Navigator.pushReplacementNamed(context, "/dashboard");
+          Navigator.pushReplacementNamed(context, "/admin/dashboard");
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Email atau Password salah ❌")),
@@ -47,7 +48,9 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
           width: 400,
           child: Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Form(
@@ -60,7 +63,7 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: AppTheme.primaryColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -69,12 +72,13 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
 
                     TextFormField(
                       controller: _emailC,
-                      validator: (v) => v!.contains("@") ? null : "Email tidak valid",
+                      validator: (v) =>
+                          v!.isEmpty ? "Username tidak boleh kosong" : null,
                       decoration: InputDecoration(
-                        labelText: "Email",
+                        labelText: "Username",
                         prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
@@ -84,20 +88,22 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                     TextFormField(
                       controller: _passC,
                       obscureText: _obscurePass,
-                      validator: (v) => v!.length < 6 ? "Min 6 karakter" : null,
+                      validator: (v) => v!.length < 3 ? "Min 3 karakter" : null,
                       decoration: InputDecoration(
                         labelText: "Password",
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePass ? Icons.visibility_off : Icons.visibility,
+                            _obscurePass
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                           ),
                           onPressed: () {
                             setState(() => _obscurePass = !_obscurePass);
                           },
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
@@ -110,7 +116,8 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _login,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.white,
                         ),
                         child: _isLoading
                             ? const CircularProgressIndicator()

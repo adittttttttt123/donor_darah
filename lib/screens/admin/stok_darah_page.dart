@@ -1,44 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../core/app_theme.dart';
+import '../../controllers/data_controller.dart';
 
 class StokDarahPage extends StatelessWidget {
   const StokDarahPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final data = [
-      {"gol": "A+", "stok": 40, "status": "Perhatian"},
-      {"gol": "A-", "stok": 12, "status": "Kritis"},
-      {"gol": "B+", "stok": 50, "status": "Aman"},
-      {"gol": "B-", "stok": 9, "status": "Kritis"},
-      {"gol": "AB+", "stok": 6, "status": "Kritis"},
-      {"gol": "AB-", "stok": 2, "status": "Kritis"},
-      {"gol": "O+", "stok": 82, "status": "Aman"},
-      {"gol": "O-", "stok": 18, "status": "Perhatian"},
-    ];
+    final controller = Get.find<DataController>();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Stok Darah"),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: AppTheme.primaryColor,
+        foregroundColor: Colors.white,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: data.map((item) {
-          return Card(
-            child: ListTile(
-              title: Text("Golongan: ${item['gol']}"),
-              subtitle: Text("Stok: ${item['stok']} kantong"),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _statusDot(item['status'] as String),
-                  const SizedBox(width: 6),
-                  Text(item['status'] as String),
-                ],
+      body: Obx(
+        () => ListView(
+          padding: const EdgeInsets.all(16),
+          children: controller.stokDarah.entries.map((item) {
+            final gol = item.key;
+            final stok = item.value;
+            final status = stok >= 20
+                ? 'Aman'
+                : (stok >= 10 ? 'Perhatian' : 'Kritis');
+
+            return Card(
+              elevation: 2,
+              margin: const EdgeInsets.only(bottom: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
-          );
-        }).toList(),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                title: Text(
+                  "Golongan: $gol",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text("Stok: $stok kantong"),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.remove_circle_outline,
+                        color: Colors.red,
+                      ),
+                      onPressed: () => controller.updateStok(gol, -1),
+                    ),
+                    SizedBox(
+                      width: 30,
+                      child: Text(
+                        "$stok",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.add_circle_outline,
+                        color: Colors.green,
+                      ),
+                      onPressed: () => controller.updateStok(gol, 1),
+                    ),
+                    const SizedBox(width: 8),
+                    _statusDot(status),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

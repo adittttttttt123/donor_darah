@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/app_theme.dart';
 import 'package:get/get.dart';
+import '../../controllers/data_controller.dart';
+import '../../controllers/user_controller.dart';
 
 class UserDaftarDonorScreen extends StatefulWidget {
   const UserDaftarDonorScreen({super.key});
@@ -177,6 +179,16 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
         );
         return;
       }
+
+      final userController = Get.find<UserController>();
+      final dataController = Get.find<DataController>();
+
+      // Add to global state
+      dataController.addPendonor(
+        userController.nama.value,
+        userController.golDarah.value,
+        tanggal,
+      );
 
       showDialog(
         context: context,

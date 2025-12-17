@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../core/app_theme.dart';
 import '../../widgets/stat_card.dart';
+import '../../controllers/data_controller.dart';
 
 class DashboardAdminPage extends StatefulWidget {
   const DashboardAdminPage({super.key});
@@ -10,34 +12,7 @@ class DashboardAdminPage extends StatefulWidget {
 }
 
 class _DashboardAdminPageState extends State<DashboardAdminPage> {
-  // Mock data
-  final Map<String, int> stokDarah = {
-    'A+': 40,
-    'A-': 12,
-    'B+': 50,
-    'B-': 9,
-    'AB+': 6,
-    'AB-': 2,
-    'O+': 82,
-    'O-': 18,
-  };
-
-  final List<Map<String, String>> pendonorTerbaru = [
-    {'nama': 'Andi Setiawan', 'golongan': 'O+', 'terakhir': '2025-10-12'},
-    {'nama': 'Siti Aminah', 'golongan': 'A+', 'terakhir': '2025-09-20'},
-    {'nama': 'Budi Santoso', 'golongan': 'B+', 'terakhir': '2025-07-01'},
-    {'nama': 'Rina Marlina', 'golongan': 'AB-', 'terakhir': '2025-06-15'},
-  ];
-
-  final List<Map<String, String>> jadwalDonor = [
-    {'lokasi': 'RSUD Kota', 'tanggal': '2025-11-15', 'jam': '08:00 - 12:00'},
-    {'lokasi': 'Kampus ABC', 'tanggal': '2025-11-20', 'jam': '09:00 - 13:00'},
-    {'lokasi': 'Mall XYZ', 'tanggal': '2025-12-02', 'jam': '10:00 - 16:00'},
-  ];
-
-  int totalPendonor = 150;
-  int pendonorAktif = 120;
-  int eventAktif = 3;
+  final DataController controller = Get.find<DataController>();
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +82,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
   }
 
   Widget _buildSidebar(BuildContext context) {
+    var currentRoute = ModalRoute.of(context)?.settings.name;
     return Container(
       width: 250,
       color: Colors.white,
@@ -128,13 +104,40 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
             ),
           ),
           const SizedBox(height: 12),
-          _sidebarItem(Icons.dashboard, 'Dashboard', isActive: true),
-          _sidebarItem(Icons.people, 'Data Pendonor'),
-          _sidebarItem(Icons.inventory_2, 'Stok Darah'),
-          _sidebarItem(Icons.event, 'Jadwal Donor'),
+          _sidebarItem(
+            Icons.dashboard,
+            'Dashboard',
+            isActive: currentRoute == '/admin/dashboard',
+            onTap: () =>
+                Navigator.pushReplacementNamed(context, '/admin/dashboard'),
+          ),
+          _sidebarItem(
+            Icons.people,
+            'Data Pendonor',
+            isActive: currentRoute == '/admin/pendonor',
+            onTap: () => Navigator.pushNamed(context, '/admin/pendonor'),
+          ),
+          _sidebarItem(
+            Icons.inventory_2,
+            'Stok Darah',
+            isActive: currentRoute == '/admin/stok',
+            onTap: () => Navigator.pushNamed(context, '/admin/stok'),
+          ),
+          _sidebarItem(
+            Icons.event,
+            'Jadwal Donor',
+            isActive: currentRoute == '/admin/jadwal',
+            onTap: () => Navigator.pushNamed(context, '/admin/jadwal'),
+          ),
           const Spacer(),
           const Divider(),
-          _sidebarItem(Icons.logout, 'Logout', color: Colors.red),
+          _sidebarItem(
+            Icons.logout,
+            'Logout',
+            color: Colors.red,
+            onTap: () =>
+                Navigator.pushReplacementNamed(context, '/admin_login'),
+          ),
           const SizedBox(height: 24),
         ],
       ),
@@ -146,6 +149,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
     String title, {
     bool isActive = false,
     Color? color,
+    VoidCallback? onTap,
   }) {
     return ListTile(
       leading: Icon(
@@ -162,7 +166,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
       selected: isActive,
       selectedTileColor: AppTheme.primaryColor.withOpacity(0.05),
       dense: true,
-      onTap: () {},
+      onTap: onTap,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.horizontal(right: Radius.circular(30)),
       ),
@@ -173,38 +177,40 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
   Widget _buildStatsGrid(double screenWidth) {
     int crossAxisCount = screenWidth > 1100 ? 4 : (screenWidth > 600 ? 2 : 1);
 
-    return GridView.count(
-      crossAxisCount: crossAxisCount,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 1.5, // Make cards shorter
-      children: [
-        StatCard(
-          title: 'Total Pendonor',
-          value: totalPendonor.toString(),
-          icon: Icons.people,
-        ),
-        StatCard(
-          title: 'Pendonor Aktif',
-          value: pendonorAktif.toString(),
-          icon: Icons.favorite,
-          color: Colors.pink,
-        ),
-        StatCard(
-          title: 'Event Bulan Ini',
-          value: eventAktif.toString(),
-          icon: Icons.calendar_today,
-          color: Colors.orange,
-        ),
-        StatCard(
-          title: 'Total Stok (Kantong)',
-          value: stokDarah.values.reduce((a, b) => a + b).toString(),
-          icon: Icons.local_hospital,
-          color: Colors.teal,
-        ),
-      ],
+    return Obx(
+      () => GridView.count(
+        crossAxisCount: crossAxisCount,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.5, // Make cards shorter
+        children: [
+          StatCard(
+            title: 'Total Pendonor',
+            value: controller.totalPendonor.toString(),
+            icon: Icons.people,
+          ),
+          StatCard(
+            title: 'Pendonor Aktif',
+            value: controller.pendonorAktif.toString(),
+            icon: Icons.favorite,
+            color: Colors.pink,
+          ),
+          StatCard(
+            title: 'Event Bulan Ini',
+            value: controller.eventAktif.toString(),
+            icon: Icons.calendar_today,
+            color: Colors.orange,
+          ),
+          StatCard(
+            title: 'Total Stok (Kantong)',
+            value: controller.totalStok.toString(),
+            icon: Icons.local_hospital,
+            color: Colors.teal,
+          ),
+        ],
+      ),
     );
   }
 
@@ -237,63 +243,67 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
             width: double.infinity,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingRowHeight: 40,
-                dataRowMinHeight: 40,
-                dataRowMaxHeight: 52,
-                columns: const [
-                  DataColumn(label: Text('Golongan Darah')),
-                  DataColumn(label: Text('Jumlah Stok')),
-                  DataColumn(label: Text('Status')),
-                ],
-                rows: stokDarah.entries.map((e) {
-                  final status = e.value >= 20
-                      ? 'Aman'
-                      : (e.value >= 10 ? 'Menipis' : 'Kritis');
-                  final color = e.value >= 20
-                      ? Colors.green
-                      : (e.value >= 10 ? Colors.orange : Colors.red);
+              child: Obx(
+                () => DataTable(
+                  headingRowHeight: 40,
+                  dataRowMinHeight: 40,
+                  dataRowMaxHeight: 52,
+                  columns: const [
+                    DataColumn(label: Text('Golongan Darah')),
+                    DataColumn(label: Text('Jumlah Stok')),
+                    DataColumn(label: Text('Status')),
+                  ],
+                  rows: controller.stokDarah.entries.map((e) {
+                    final status = e.value >= 20
+                        ? 'Aman'
+                        : (e.value >= 10 ? 'Menipis' : 'Kritis');
+                    final color = e.value >= 20
+                        ? Colors.green
+                        : (e.value >= 10 ? Colors.orange : Colors.red);
 
-                  return DataRow(
-                    cells: [
-                      DataCell(
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            e.key,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                        Text(
-                          '${e.value} Kantong',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      DataCell(
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.circle, size: 10, color: color),
-                            const SizedBox(width: 6),
-                            Text(
-                              status,
-                              style: TextStyle(
-                                color: color,
-                                fontWeight: FontWeight.w600,
+                    return DataRow(
+                      cells: [
+                        DataCell(
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              e.key,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }).toList(),
+                        DataCell(
+                          Text(
+                            '${e.value} Kantong',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        DataCell(
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.circle, size: 10, color: color),
+                              const SizedBox(width: 6),
+                              Text(
+                                status,
+                                style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ),
@@ -322,34 +332,37 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
               ),
             ),
             const Divider(height: 1),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: pendonorTerbaru.length,
-              separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
-              itemBuilder: (context, index) {
-                final item = pendonorTerbaru[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                    child: Text(
-                      item['nama']![0],
-                      style: const TextStyle(color: AppTheme.primaryColor),
+            Obx(
+              () => ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.pendonorList.length,
+                separatorBuilder: (_, __) =>
+                    const Divider(height: 1, indent: 16),
+                itemBuilder: (context, index) {
+                  final item = controller.pendonorList[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                      child: Text(
+                        item['nama']![0],
+                        style: const TextStyle(color: AppTheme.primaryColor),
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    item['nama']!,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text("${item['golongan']} • ${item['terakhir']}"),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Colors.grey,
-                  ),
-                  onTap: () {},
-                );
-              },
+                    title: Text(
+                      item['nama']!,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text("${item['golongan']} • ${item['terakhir']}"),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.grey,
+                    ),
+                    onTap: () {},
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -370,34 +383,37 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
             ),
           ),
           const Divider(height: 1),
-          // Using a simple list here for brevity, could be a grid or table
-          ...jadwalDonor.map(
-            (j) => ListTile(
-              leading: divContainer(
-                child: const Icon(
-                  Icons.calendar_month,
-                  color: AppTheme.primaryColor,
-                ),
-              ),
-              title: Text(
-                j['lokasi']!,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text("${j['tanggal']} • ${j['jam']}"),
-              trailing: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.edit, size: 16),
-                label: const Text("Atur"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                  foregroundColor: AppTheme.primaryColor,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+          Obx(
+            () => Column(
+              children: controller.jadwalList.map((j) {
+                return ListTile(
+                  leading: divContainer(
+                    child: const Icon(
+                      Icons.calendar_month,
+                      color: AppTheme.primaryColor,
+                    ),
                   ),
-                ),
-              ),
+                  title: Text(
+                    j['lokasi']!,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text("${j['tanggal']} • ${j['jam']}"),
+                  trailing: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.edit, size: 16),
+                    label: const Text("Atur"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                      foregroundColor: AppTheme.primaryColor,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
