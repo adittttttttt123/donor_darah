@@ -25,6 +25,35 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
           const SizedBox(width: 8),
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Generate Data Dummy"),
+                  content: const Text(
+                    "Apakah Anda yakin ingin mengisi database dengan data dummy? Ini akan menambahkan 20 pendonor dan 10 jadwal.",
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Batal"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        controller.seedDatabase();
+                      },
+                      child: const Text("Ya, Isi Data"),
+                    ),
+                  ],
+                ),
+              );
+            },
+            tooltip: "Isi Data Dummy",
+            icon: const Icon(Icons.storage, color: Colors.blue),
+          ),
+          const SizedBox(width: 8),
           const CircleAvatar(
             backgroundColor: Colors.white24,
             child: Text('A', style: TextStyle(color: Colors.white)),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/app_theme.dart';
 import 'screens/user/user_login.dart';
 import 'screens/user/user_register.dart';
@@ -20,7 +21,14 @@ import 'screens/admin/detail_pendonor_page.dart';
 import 'controllers/data_controller.dart';
 import 'controllers/user_controller.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'YOUR_SUPABASE_URL',
+    anonKey: 'YOUR_SUPABASE_ANON_KEY',
+  );
+
   Get.put(UserController()); // Existing user controller
   Get.put(DataController()); // New global data controller
   runApp(const DonorDarahUserApp());

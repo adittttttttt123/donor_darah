@@ -1,6 +1,63 @@
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DataController extends GetxController {
+  final _supabase = Supabase.instance.client;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      // Fetch Stok
+      final stokData = await _supabase.from('stok_darah').select();
+      final newStok = <String, int>{};
+      for (var item in stokData) {
+        newStok[item['golongan']] = item['stok'];
+      }
+      stokDarah.assignAll(newStok);
+
+      // Fetch Pendonor
+      final donorData = await _supabase
+          .from('pendonor')
+          .select()
+          .order('created_at', ascending: false);
+      pendonorList.assignAll(
+        (donorData as List)
+            .map(
+              (e) => {
+                'nama': e['nama'].toString(),
+                'golongan': e['golongan'].toString(),
+                'terakhir': e['terakhir'].toString(),
+              },
+            )
+            .toList(),
+      );
+
+      // Fetch Jadwal
+      final jadwalData = await _supabase
+          .from('jadwal')
+          .select()
+          .order('created_at', ascending: false);
+      jadwalList.assignAll(
+        (jadwalData as List)
+            .map(
+              (e) => {
+                'lokasi': e['lokasi'].toString(),
+                'tanggal': e['tanggal'].toString(),
+                'jam': e['jam'].toString(),
+              },
+            )
+            .toList(),
+      );
+    } catch (e) {
+      Get.snackbar("Error", "Gagal mengambil data: $e");
+    }
+  }
+
   // --- Stok Darah ---
   var stokDarah = <String, int>{
     'A+': 40,
@@ -13,9 +70,24 @@ class DataController extends GetxController {
     'O-': 18,
   }.obs;
 
-  void updateStok(String gol, int amount) {
+  Future<void> updateStok(String gol, int amount) async {
     if (stokDarah.containsKey(gol)) {
-      stokDarah[gol] = (stokDarah[gol] ?? 0) + amount;
+      final current = stokDarah[gol] ?? 0;
+      final newValue = current + amount;
+
+      // Optimistic Update
+      stokDarah[gol] = newValue;
+
+      try {
+        await _supabase.from('stok_darah').upsert({
+          'golongan': gol,
+          'stok': newValue,
+        });
+      } catch (e) {
+        // Revert on error
+        stokDarah[gol] = current;
+        Get.snackbar("Error", "Gagal update stok");
+      }
     }
   }
 
@@ -27,12 +99,18 @@ class DataController extends GetxController {
     {'nama': 'Rina Marlina', 'golongan': 'AB-', 'terakhir': '2025-06-15'},
   ].obs;
 
-  void addPendonor(String nama, String gol, String tanggal) {
-    pendonorList.insert(0, {
-      'nama': nama,
-      'golongan': gol,
-      'terakhir': tanggal,
-    });
+  Future<void> addPendonor(String nama, String gol, String tanggal) async {
+    try {
+      await _supabase.from('pendonor').insert({
+        'nama': nama,
+        'golongan': gol,
+        'terakhir': tanggal,
+      });
+      // Refresh list
+      fetchData();
+    } catch (e) {
+      Get.snackbar("Error", "Gagal menambah pendonor");
+    }
   }
 
   // --- Jadwal Event ---
@@ -42,13 +120,116 @@ class DataController extends GetxController {
     {'lokasi': 'Mall XYZ', 'tanggal': '2025-12-02', 'jam': '10:00 - 16:00'},
   ].obs;
 
-  void addJadwal(String lokasi, String tanggal, String jam) {
-    jadwalList.add({'lokasi': lokasi, 'tanggal': tanggal, 'jam': jam});
+  Future<void> addJadwal(String lokasi, String tanggal, String jam) async {
+    try {
+      await _supabase.from('jadwal').insert({
+        'lokasi': lokasi,
+        'tanggal': tanggal,
+        'jam': jam,
+      });
+      fetchData();
+    } catch (e) {
+      Get.snackbar("Error", "Gagal menambah jadwal");
+    }
   }
 
   // Computed Properties for Dashboard
-  int get totalPendonor => 150 + pendonorList.length; // Mock base + new
-  int get pendonorAktif => 120 + (pendonorList.length ~/ 2);
+  Future<void> seedDatabase() async {
+    try {
+      // 20 Dummy Donors
+      final donors = [
+        {'nama': 'Budi Santoso', 'golongan': 'A+', 'terakhir': '2025-01-10'},
+        {'nama': 'Siti Aminah', 'golongan': 'B-', 'terakhir': '2025-02-15'},
+        {'nama': 'Agus Pratama', 'golongan': 'O+', 'terakhir': '2025-03-20'},
+        {'nama': 'Dewi Lestari', 'golongan': 'AB+', 'terakhir': '2025-04-25'},
+        {'nama': 'Eko Saputra', 'golongan': 'A-', 'terakhir': '2025-05-30'},
+        {'nama': 'Fajar Nugroho', 'golongan': 'B+', 'terakhir': '2025-06-05'},
+        {'nama': 'Gita Pertiwi', 'golongan': 'O-', 'terakhir': '2025-07-10'},
+        {'nama': 'Hadi Wijaya', 'golongan': 'AB-', 'terakhir': '2025-08-15'},
+        {'nama': 'Indah Sari', 'golongan': 'A+', 'terakhir': '2025-09-20'},
+        {'nama': 'Joko Susilo', 'golongan': 'B-', 'terakhir': '2025-10-25'},
+        {'nama': 'Kartika Putri', 'golongan': 'O+', 'terakhir': '2025-11-30'},
+        {'nama': 'Lukman Hakim', 'golongan': 'AB+', 'terakhir': '2025-12-05'},
+        {'nama': 'Maya Anggraini', 'golongan': 'A-', 'terakhir': '2025-01-12'},
+        {'nama': 'Nina Kurnia', 'golongan': 'B+', 'terakhir': '2025-02-18'},
+        {'nama': 'Oscar Pratama', 'golongan': 'O-', 'terakhir': '2025-03-22'},
+        {'nama': 'Putri Rahayu', 'golongan': 'AB-', 'terakhir': '2025-04-28'},
+        {'nama': 'Rizky Maulana', 'golongan': 'A+', 'terakhir': '2025-05-02'},
+        {'nama': 'Sari Wulandari', 'golongan': 'B-', 'terakhir': '2025-06-08'},
+        {'nama': 'Tono Sudibyo', 'golongan': 'O+', 'terakhir': '2025-07-12'},
+        {'nama': 'Umar Dani', 'golongan': 'AB+', 'terakhir': '2025-08-18'},
+      ];
+
+      await _supabase.from('pendonor').insert(donors);
+
+      // 10 Dummy Schedules
+      final schedules = [
+        {
+          'lokasi': 'PMI Jakarta Pusat',
+          'tanggal': '2025-12-25',
+          'jam': '08:00 - 12:00',
+        },
+        {
+          'lokasi': 'RSUD Tangerang',
+          'tanggal': '2025-12-26',
+          'jam': '09:00 - 13:00',
+        },
+        {
+          'lokasi': 'Mall Grand Indonesia',
+          'tanggal': '2025-12-27',
+          'jam': '10:00 - 14:00',
+        },
+        {
+          'lokasi': 'Kantor Walikota Depok',
+          'tanggal': '2025-12-28',
+          'jam': '08:30 - 11:30',
+        },
+        {
+          'lokasi': 'Universitas Indonesia',
+          'tanggal': '2025-12-29',
+          'jam': '09:00 - 15:00',
+        },
+        {
+          'lokasi': 'GOR Bekasi',
+          'tanggal': '2025-12-30',
+          'jam': '08:00 - 12:00',
+        },
+        {
+          'lokasi': 'Masjid Istiqlal',
+          'tanggal': '2025-12-31',
+          'jam': '13:00 - 16:00',
+        },
+        {
+          'lokasi': 'Gereja Katedral',
+          'tanggal': '2026-01-01',
+          'jam': '08:00 - 11:00',
+        },
+        {
+          'lokasi': 'Stasiun Gambir',
+          'tanggal': '2026-01-02',
+          'jam': '09:00 - 14:00',
+        },
+        {
+          'lokasi': 'Bandara Soekarno-Hatta',
+          'tanggal': '2026-01-03',
+          'jam': '10:00 - 15:00',
+        },
+      ];
+
+      await _supabase.from('jadwal').insert(schedules);
+
+      // Refresh
+      fetchData();
+      Get.snackbar("Sukses", "Data dummy berhasil ditambahkan!");
+    } catch (e) {
+      Get.snackbar("Error", "Gagal menambahkan data dummy: $e");
+    }
+  }
+
+  // Computed Properties for Dashboard
+  int get totalPendonor => pendonorList.length;
+  int get pendonorAktif =>
+      pendonorList.isNotEmpty ? pendonorList.length - 2 : 0;
   int get eventAktif => jadwalList.length;
   int get totalStok => stokDarah.values.fold(0, (sum, item) => sum + item);
 }
