@@ -65,7 +65,32 @@ class UserDashboardScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildNewsCard(),
+                  _buildNewsCard(
+                    context,
+                    title: "Manfaat Donor Darah Bagi Kesehatan",
+                    imageIcon: Icons.favorite,
+                    onTap: () {
+                      _showNewsDetail(context, "Manfaat Donor Darah");
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildNewsCard(
+                    context,
+                    title: "Syarat Menjadi Pendonor Aktif",
+                    imageIcon: Icons.checklist,
+                    onTap: () {
+                      _showNewsDetail(context, "Syarat Pendonor");
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildNewsCard(
+                    context,
+                    title: "Jadwal Mobil Unit Keliling Minggu Ini",
+                    imageIcon: Icons.directions_bus,
+                    onTap: () {
+                      _showNewsDetail(context, "Jadwal Keliling");
+                    },
+                  ),
                   const SizedBox(height: 16),
                   _buildStockTicker(),
                 ],
@@ -118,16 +143,21 @@ class UserDashboardScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: Colors.white,
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/settings');
+                },
                 child: CircleAvatar(
-                  radius: 26,
-                  backgroundColor: AppTheme.primaryColor,
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 30,
+                  radius: 28,
+                  backgroundColor: Colors.white,
+                  child: CircleAvatar(
+                    radius: 26,
+                    backgroundColor: AppTheme.primaryColor,
+                    child: const Icon(
+                      Icons.settings,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),
@@ -200,47 +230,76 @@ class UserDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNewsCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(12),
+  Widget _buildNewsCard(
+    BuildContext context, {
+    required String title,
+    required IconData imageIcon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(imageIcon, color: AppTheme.primaryColor, size: 40),
               ),
-              child: const Icon(Icons.image, color: Colors.grey),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Manfaat Donor Darah Bagi Kesehatan",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Baca selengkapnya...",
-                    style: TextStyle(
-                      color: AppTheme.primaryColor,
-                      fontSize: 12,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Baca selengkapnya...",
+                      style: TextStyle(
+                        color: AppTheme.primaryColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  void _showNewsDetail(BuildContext context, String title) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: const Text(
+          "Ini adalah detail informasi/berita. Konten lengkap berita akan ditampilkan di sini.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Tutup"),
+          ),
+        ],
       ),
     );
   }

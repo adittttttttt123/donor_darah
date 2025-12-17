@@ -374,7 +374,10 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
           ...jadwalDonor.map(
             (j) => ListTile(
               leading: divContainer(
-                child: const Icon(Icons.calendar_month, color: Colors.blue),
+                child: const Icon(
+                  Icons.calendar_month,
+                  color: AppTheme.primaryColor,
+                ),
               ),
               title: Text(
                 j['lokasi']!,
@@ -386,8 +389,8 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
                 icon: const Icon(Icons.edit, size: 16),
                 label: const Text("Atur"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade50,
-                  foregroundColor: Colors.blue,
+                  backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                  foregroundColor: AppTheme.primaryColor,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -406,7 +409,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: AppTheme.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: child,

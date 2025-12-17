@@ -18,10 +18,21 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
 
   // Controller untuk field input
   late TextEditingController _namaController;
-  late TextEditingController _golonganController;
   late TextEditingController _noHpController;
   late TextEditingController _tglLahirController;
-  String _selectedAlamat = "Boyolali";
+  late TextEditingController _alamatController; // New controller
+
+  String _selectedGolongan = "A+";
+  final List<String> _golonganDarahList = [
+    "A+",
+    "A-",
+    "B+",
+    "B-",
+    "AB+",
+    "AB-",
+    "O+",
+    "O-",
+  ];
 
   final UserController _userController = Get.find<UserController>();
 
@@ -30,32 +41,22 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
   // ignore: unused_field
   String? _imagePath;
 
-  final List<String> _daftarAlamat = [
-    "Boyolali",
-    "Solo",
-    "Klaten",
-    "Salatiga",
-    "Sragen",
-    "Karanganyar",
-  ];
-
   @override
   void initState() {
     super.initState();
     _namaController = TextEditingController(text: _userController.nama.value);
-    _golonganController = TextEditingController(
-      text: _userController.golDarah.value,
-    );
+    _selectedGolongan = _userController.golDarah.value;
+    // Validate if initial value is in list
+    if (!_golonganDarahList.contains(_selectedGolongan)) {
+      _selectedGolongan = _golonganDarahList.first;
+    }
     _noHpController = TextEditingController(text: _userController.noHp.value);
     _tglLahirController = TextEditingController(
       text: _userController.tglLahir.value,
     );
-    _selectedAlamat = _userController.alamat.value;
-
-    // Validate if selected address is in the list, if not default to first
-    if (!_daftarAlamat.contains(_selectedAlamat)) {
-      _selectedAlamat = _daftarAlamat.first;
-    }
+    _alamatController = TextEditingController(
+      text: _userController.alamat.value,
+    );
   }
 
   @override
@@ -123,11 +124,41 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                     icon: Icons.person,
                   ),
 
-                  // Golongan Darah
-                  _buildTextField(
-                    controller: _golonganController,
-                    label: "Golongan Darah",
-                    icon: Icons.bloodtype,
+                  // Golongan Darah Dropdown
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedGolongan,
+                      items: _golonganDarahList
+                          .map(
+                            (e) => DropdownMenuItem(value: e, child: Text(e)),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGolongan = value!;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Golongan Darah",
+                        prefixIcon: const Icon(
+                          Icons.bloodtype,
+                          color: AppTheme.primaryColor,
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF9FAFB),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppTheme.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
 
                   // Nomor HP
@@ -150,41 +181,12 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                     ),
                   ),
 
-                  // Alamat Dropdown
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _selectedAlamat,
-                      items: _daftarAlamat
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedAlamat = value!;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Alamat",
-                        prefixIcon: const Icon(
-                          Icons.location_on,
-                          color: AppTheme.primaryColor,
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppTheme.primaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
+                  // Alamat TextField (Free Text)
+                  _buildTextField(
+                    controller: _alamatController,
+                    label: "Alamat Lengkap",
+                    icon: Icons.location_on,
+                    keyboardType: TextInputType.streetAddress,
                   ),
 
                   const SizedBox(height: 25),
@@ -195,10 +197,10 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                       if (_formKey.currentState!.validate()) {
                         _userController.updateProfile(
                           newNama: _namaController.text,
-                          newGolDarah: _golonganController.text,
+                          newGolDarah: _selectedGolongan,
                           newNoHp: _noHpController.text,
                           newTglLahir: _tglLahirController.text,
-                          newAlamat: _selectedAlamat,
+                          newAlamat: _alamatController.text,
                           newImageBytes: _imageBytes,
                         );
 
