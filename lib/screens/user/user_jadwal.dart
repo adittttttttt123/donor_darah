@@ -15,26 +15,31 @@ class _UserJadwalScreenState extends State<UserJadwalScreen> {
       "tempat": "PMI Boyolali",
       "tanggal": "10 Desember 2025",
       "alamat": "Jl. Kates No. 10",
+      "jam": "08:00 - 12:00",
     },
     {
       "tempat": "RSUD Pandan Arang",
       "tanggal": "15 Desember 2025",
       "alamat": "Jl. Kantil No. 5",
+      "jam": "09:00 - 13:00",
     },
     {
       "tempat": "Kantor Kecamatan Mojosongo",
       "tanggal": "18 Desember 2025",
       "alamat": "Mojosongo",
+      "jam": "08:30 - 11:30",
     },
     {
       "tempat": "Balai Desa Teras",
       "tanggal": "20 Desember 2025",
       "alamat": "Teras",
+      "jam": "09:00 - 14:00",
     },
     {
       "tempat": "RS Indriati Boyolali",
       "tanggal": "22 Desember 2025",
       "alamat": "Mojosongo",
+      "jam": "10:00 - 15:00",
     },
   ];
 

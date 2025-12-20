@@ -19,6 +19,7 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
   // Data dari arguments
   late String lokasi;
   late String tanggal;
+  late String jam;
 
   bool _isSehat = false;
   bool _tidakMinumObat = false;
@@ -31,6 +32,7 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     lokasi = args?['tempat'] ?? 'Lokasi Tidak Diketahui';
     tanggal = args?['tanggal'] ?? 'Tanggal Tidak Diketahui';
+    jam = args?['jam'] ?? 'Waktu Tidak Diketahui';
   }
 
   @override
@@ -160,6 +162,7 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(tanggal, style: const TextStyle(color: Colors.grey)),
+                Text(jam, style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ),
@@ -190,31 +193,10 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
         tanggal,
       );
 
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text("Pendaftaran Berhasil"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 60),
-              const SizedBox(height: 16),
-              Text(
-                "Anda telah terdaftar untuk donor darah di $lokasi pada tanggal $tanggal.\n\nSilakan datang tepat waktu.",
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Back to schedule
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        ),
+      Navigator.pushNamed(
+        context,
+        '/daftar_sukses',
+        arguments: {'tempat': lokasi, 'tanggal': tanggal, 'jam': jam},
       );
     }
   }
