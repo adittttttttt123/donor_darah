@@ -49,6 +49,7 @@ class UserKartuDonorScreen extends StatelessWidget {
                         child: Icon(
                           Icons.bloodtype,
                           size: 150,
+                          // ignore: deprecated_member_use
                           color: Colors.white.withOpacity(0.1),
                         ),
                       ),
@@ -86,6 +87,7 @@ class UserKartuDonorScreen extends StatelessWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
+                                    // ignore: deprecated_member_use
                                     color: Colors.white.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(8),
                                   ),

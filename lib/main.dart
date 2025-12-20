@@ -23,7 +23,11 @@ import 'screens/admin/detail_pendonor_page.dart';
 import 'controllers/data_controller.dart';
 import 'controllers/user_controller.dart';
 
+// ignore: depend_on_referenced_packages
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
 void main() async {
+  setUrlStrategy(PathUrlStrategy());
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(

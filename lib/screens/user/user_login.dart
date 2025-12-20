@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserLoginScreen extends StatefulWidget {
   const UserLoginScreen({super.key});
@@ -13,9 +14,21 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   bool isLoading = false;
 
   void login() {
+    if (emailController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Harap isi semua kolom'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     setState(() => isLoading = true);
 
     Future.delayed(const Duration(seconds: 1), () {
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/dashboard');
     });
   }
@@ -32,6 +45,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.redAccent.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
@@ -77,7 +91,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {}, // TODO: Implement Forgot Password
+                  onPressed: () {
+                    _showForgotPasswordDialog(context);
+                  },
                   child: const Text('Lupa Kata Sandi?'),
                 ),
               ),
@@ -138,6 +154,88 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showForgotPasswordDialog(BuildContext context) {
+    final resetEmailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Lupa Kata Sandi"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Masukkan email Anda untuk menerima link reset password.",
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 15),
+            TextField(
+              controller: resetEmailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: "Email",
+                prefixIcon: const Icon(Icons.email),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () async {
+              final email = resetEmailController.text.trim();
+              if (email.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Email tidak boleh kosong")),
+                );
+                return;
+              }
+
+              Navigator.pop(context); // Close dialog first
+
+              try {
+                await Supabase.instance.client.auth.resetPasswordForEmail(
+                  email,
+                );
+                if (mounted) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Link reset password dikirim ke $email"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Gagal mengirim link: $e"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text("Kirim", style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

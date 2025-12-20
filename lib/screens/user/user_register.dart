@@ -15,9 +15,33 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   bool isLoading = false;
 
   void register() {
+    if (nameController.text.trim().isEmpty ||
+        emailController.text.trim().isEmpty ||
+        passwordController.text.trim().isEmpty ||
+        confirmController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Harap isi semua kolom'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (passwordController.text != confirmController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password dan konfirmasi password tidak cocok'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     setState(() => isLoading = true);
 
     Future.delayed(const Duration(seconds: 1), () {
+      // ignore: use_build_context_synchronously
       Navigator.pop(context); // kembali ke login
     });
   }
@@ -36,6 +60,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.redAccent.withOpacity(0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
@@ -162,20 +187,6 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   ],
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            top: 40,
-            right: 20,
-            child: IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/admin_login');
-              },
-              icon: const Icon(
-                Icons.admin_panel_settings,
-                color: Colors.redAccent,
-              ),
-              tooltip: "Login Admin",
             ),
           ),
         ],

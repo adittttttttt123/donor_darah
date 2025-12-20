@@ -34,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: "Tema Gelap",
             trailing: Switch(
               value: isDarkTheme,
-              activeColor: AppTheme.primaryColor,
+              activeThumbColor: AppTheme.primaryColor,
               onChanged: (value) {
                 setState(() {
                   isDarkTheme = value;

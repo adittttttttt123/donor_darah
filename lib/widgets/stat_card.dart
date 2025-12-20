@@ -19,6 +19,7 @@ class StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
+      // ignore: deprecated_member_use
       shadowColor: color.withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
@@ -30,6 +31,7 @@ class StatCard extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               Colors.white,
+              // ignore: deprecated_member_use
               color.withOpacity(0.05),
             ],
           ),
@@ -39,6 +41,7 @@ class StatCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),

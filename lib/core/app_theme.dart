@@ -87,6 +87,7 @@ class AppTheme {
         ),
         dataRowColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
+            // ignore: deprecated_member_use
             return secondaryColor.withOpacity(0.5);
           }
           return null; // Use default

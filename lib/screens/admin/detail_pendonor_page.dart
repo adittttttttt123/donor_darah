@@ -100,7 +100,7 @@ class _DetailPendonorPageState extends State<DetailPendonorPage> {
             const SizedBox(height: 16),
 
             DropdownButtonFormField<String>(
-              value: _selectedGolDarah,
+              initialValue: _selectedGolDarah,
               items: _bloodTypes
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                   .toList(),

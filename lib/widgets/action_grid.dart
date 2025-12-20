@@ -29,6 +29,7 @@ class ActionGridItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: AppTheme.primaryColor.withOpacity(0.08),
                   shape: BoxShape.circle,
                 ),

@@ -24,12 +24,15 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
 
       Future.delayed(const Duration(seconds: 1), () {
         if (_emailC.text == adminEmail && _passC.text == adminPass) {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Login Admin Berhasil ✅")),
           );
 
+          // ignore: use_build_context_synchronously
           Navigator.pushReplacementNamed(context, "/admin/dashboard");
         } else {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Email atau Password salah ❌")),
           );

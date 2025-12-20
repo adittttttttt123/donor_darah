@@ -120,6 +120,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
           Container(
             padding: const EdgeInsets.all(24),
             alignment: Alignment.centerLeft,
+            // ignore: deprecated_member_use
             color: AppTheme.primaryColor.withOpacity(0.05),
             child: Row(
               children: [
@@ -193,6 +194,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
         ),
       ),
       selected: isActive,
+      // ignore: deprecated_member_use
       selectedTileColor: AppTheme.primaryColor.withOpacity(0.05),
       dense: true,
       onTap: onTap,
@@ -372,6 +374,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
                   final item = controller.pendonorList[index];
                   return ListTile(
                     leading: CircleAvatar(
+                      // ignore: deprecated_member_use
                       backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
                       child: Text(
                         item['nama']![0],
@@ -432,6 +435,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
                     icon: const Icon(Icons.edit, size: 16),
                     label: const Text("Atur"),
                     style: ElevatedButton.styleFrom(
+                      // ignore: deprecated_member_use
                       backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
                       foregroundColor: AppTheme.primaryColor,
                       elevation: 0,
@@ -454,6 +458,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: AppTheme.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),

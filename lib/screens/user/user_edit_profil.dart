@@ -128,7 +128,7 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: DropdownButtonFormField<String>(
-                      value: _selectedGolongan,
+                      initialValue: _selectedGolongan,
                       items: _golonganDarahList
                           .map(
                             (e) => DropdownMenuItem(value: e, child: Text(e)),
