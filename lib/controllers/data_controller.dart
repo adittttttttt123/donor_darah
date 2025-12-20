@@ -7,7 +7,8 @@ class DataController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchData();
+    // Delay slightly to ensure GetX context is ready if snackbar is needed
+    Future.delayed(Duration.zero, () => fetchData());
   }
 
   Future<void> fetchData() async {
@@ -15,8 +16,13 @@ class DataController extends GetxController {
       // Fetch Stok
       final stokData = await _supabase.from('stok_darah').select();
       final newStok = <String, int>{};
-      for (var item in stokData) {
-        newStok[item['golongan']] = item['stok'];
+      final safeStokData = stokData as List<dynamic>? ?? []; // Safety check
+
+      for (var item in safeStokData) {
+        if (item != null && item['golongan'] != null && item['stok'] != null) {
+          newStok[item['golongan'].toString()] =
+              int.tryParse(item['stok'].toString()) ?? 0;
+        }
       }
       stokDarah.assignAll(newStok);
 
@@ -25,13 +31,16 @@ class DataController extends GetxController {
           .from('pendonor')
           .select()
           .order('created_at', ascending: false);
+
+      final safeDonorData = donorData as List<dynamic>? ?? []; // Safety check
+
       pendonorList.assignAll(
-        (donorData as List)
-            .map(
+        safeDonorData
+            .map<Map<String, String>>(
               (e) => {
-                'nama': e['nama'].toString(),
-                'golongan': e['golongan'].toString(),
-                'terakhir': e['terakhir'].toString(),
+                'nama': (e['nama'] ?? '-').toString(),
+                'golongan': (e['golongan'] ?? '-').toString(),
+                'terakhir': (e['terakhir'] ?? '-').toString(),
               },
             )
             .toList(),
@@ -42,13 +51,16 @@ class DataController extends GetxController {
           .from('jadwal')
           .select()
           .order('created_at', ascending: false);
+
+      final safeJadwalData = jadwalData as List<dynamic>? ?? []; // Safety check
+
       jadwalList.assignAll(
-        (jadwalData as List)
-            .map(
+        safeJadwalData
+            .map<Map<String, String>>(
               (e) => {
-                'lokasi': e['lokasi'].toString(),
-                'tanggal': e['tanggal'].toString(),
-                'jam': e['jam'].toString(),
+                'lokasi': (e['lokasi'] ?? '-').toString(),
+                'tanggal': (e['tanggal'] ?? '-').toString(),
+                'jam': (e['jam'] ?? '-').toString(),
               },
             )
             .toList(),

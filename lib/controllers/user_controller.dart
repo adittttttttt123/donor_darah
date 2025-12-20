@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
-  var nama = "Aditya Putra".obs;
+  var nama = "Akun Demo".obs;
   var golDarah = "A+".obs;
   var noHp = "08123456789".obs;
   var tglLahir = "20 Juni 2003".obs;
@@ -10,6 +10,8 @@ class UserController extends GetxController {
   var profileImage =
       "https://cdn-icons-png.flaticon.com/512/9131/9131529.png".obs;
   var profileImageBytes = Rx<Uint8List?>(null);
+
+  var riwayatDonor = <Map<String, String>>[].obs;
 
   void updateProfile({
     required String newNama,
@@ -27,5 +29,11 @@ class UserController extends GetxController {
     if (newImageBytes != null) {
       profileImageBytes.value = newImageBytes;
     }
+  }
+
+  void addRiwayat(String tempat, String tanggal) {
+    riwayatDonor.add({'tempat': tempat, 'tgl': tanggal});
+    // Optional: Sort by date if needed, for now just append
+    riwayatDonor.refresh();
   }
 }

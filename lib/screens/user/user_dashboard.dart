@@ -1,110 +1,347 @@
 import 'package:flutter/material.dart';
-import '../../widgets/action_grid.dart';
+import 'package:get/get.dart';
+import '../../controllers/user_controller.dart';
+import '../../controllers/data_controller.dart';
 import '../widgets/user_navbar.dart';
+import '../settings/settings_page.dart';
+import 'user_jadwal.dart';
+import 'user_riwayat.dart';
 
-class UserDashboardScreen extends StatelessWidget {
+class UserDashboardScreen extends StatefulWidget {
   const UserDashboardScreen({super.key});
+
+  @override
+  State<UserDashboardScreen> createState() => _UserDashboardScreenState();
+}
+
+class _UserDashboardScreenState extends State<UserDashboardScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    const _HomeContent(),
+    const UserJadwalScreen(),
+    const UserRiwayatScreen(),
+    const SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      bottomNavigationBar: const UserNavBar(currentIndex: 0),
-      body: SingleChildScrollView(
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: UserNavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+    );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  const _HomeContent();
+
+  @override
+  Widget build(BuildContext context) {
+    // Ensure controller is initialized
+    Get.put(UserController());
+    Get.put(DataController()); // Ensure Global Data Controller is ready
+    final UserController userController = Get.find();
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildModernHero(context),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: Column(
+            _buildModernHeader(userController),
+            const SizedBox(height: 32),
+            _buildBloodCard(),
+            const SizedBox(height: 32),
+            Text(
+              "Layanan",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.25,
+              children: [
+                _buildServiceCard(
+                  context,
+                  icon: Icons.calendar_month_rounded,
+                  label: "Jadwal Donor",
+                  color: Colors.redAccent,
+                  onTap: () => Navigator.pushNamed(context, '/jadwal'),
+                ),
+                _buildServiceCard(
+                  context,
+                  icon: Icons.history_rounded,
+                  label: "Riwayat",
+                  color: Colors.grey.shade700,
+                  onTap: () => Navigator.pushNamed(context, '/riwayat'),
+                ),
+                _buildServiceCard(
+                  context,
+                  icon: Icons.location_on_rounded,
+                  label: "Lokasi Unit",
+                  color: Colors.red.shade700,
+                  onTap: () => Navigator.pushNamed(context, '/lokasi_unit'),
+                ),
+                _buildServiceCard(
+                  context,
+                  icon: Icons.card_membership_rounded,
+                  label: "Kartu Digital",
+                  color: Colors.redAccent.shade100,
+                  onTap: () => Navigator.pushNamed(context, '/kartu_donor'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Berita & Informasi",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Lihat Semua",
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildNewsItem(
+              context,
+              title: "Manfaat Donor Darah Bagi Jantung",
+              category: "KESEHATAN",
+              date: "2 Jam yang lalu",
+              imageUrl: "https://via.placeholder.com/150",
+            ),
+            const SizedBox(height: 16),
+            _buildNewsItem(
+              context,
+              title: "Jadwal Mobil Unit Keliling Minggu Ini",
+              category: "EVENT",
+              date: "Kemarin",
+              imageUrl: "https://via.placeholder.com/150",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernHeader(UserController controller) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Selamat Datang,",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Obx(
+              () => Text(
+                controller.nama.value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade900,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+            image: const DecorationImage(
+              image: AssetImage('assets/images/logo_donor.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBloodCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.red.shade900, // Deep Red
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.shade900.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.verified, color: Colors.white, size: 16),
+                    SizedBox(width: 6),
+                    Text(
+                      "Pendonor Aktif",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.favorite, color: Colors.white, size: 28),
+            ],
+          ),
+          const SizedBox(height: 24),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Layanan Utama",
+                    "Golongan Darah",
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "O+",
                     style: TextStyle(
-                      fontSize: 18,
+                      color: Colors.white,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade800,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 1.3,
-                    children: [
-                      ActionGridItem(
-                        icon: Icons.calendar_today_rounded,
-                        label: "Jadwal Donor",
-                        onTap: () => Navigator.pushNamed(context, '/jadwal'),
-                      ),
-                      ActionGridItem(
-                        icon: Icons.history_rounded,
-                        label: "Riwayat",
-                        onTap: () => Navigator.pushNamed(context, '/riwayat'),
-                      ),
-                      ActionGridItem(
-                        icon: Icons.location_on_rounded,
-                        label: "Lokasi Unit",
-                        onTap: () =>
-                            Navigator.pushNamed(context, '/lokasi_unit'),
-                      ),
-                      ActionGridItem(
-                        icon: Icons.card_membership_rounded,
-                        label: "Kartu Digital",
-                        onTap: () =>
-                            Navigator.pushNamed(context, '/kartu_donor'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Informasi & Berita",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text("Lihat Semua"),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildModernNewsCard(
-                    context,
-                    title: "Manfaat Donor Darah Bagi Kesehatan Jantung",
-                    category: "Kesehatan",
-                    imageIcon: Icons.favorite_rounded,
-                    onTap: () =>
-                        _showNewsDetail(context, "Manfaat Donor Darah"),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildModernNewsCard(
-                    context,
-                    title: "Syarat & Ketentuan Menjadi Pendonor Aktif",
-                    category: "Info",
-                    imageIcon: Icons.checklist_rtl_rounded,
-                    onTap: () => _showNewsDetail(context, "Syarat Pendonor"),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildModernNewsCard(
-                    context,
-                    title: "Jadwal Mobil Unit Keliling Minggu Ini",
-                    category: "Event",
-                    imageIcon: Icons.directions_bus_rounded,
-                    onTap: () => _showNewsDetail(context, "Jadwal Keliling"),
-                  ),
-                  const SizedBox(height: 24),
                 ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "Total Donor",
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "12x",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 32),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
               ),
             ),
           ],
@@ -113,289 +350,85 @@ class UserDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildModernHero(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.redAccent.shade700, Colors.redAccent.shade400],
-        ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.redAccent.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Halo, Aditya 👋",
-                        style: TextStyle(
-                          color: Colors.red.shade50,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        "Siap Donorkan Darah?",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {},
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              // Glassmorphic Card
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.white.withOpacity(0.2)),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Column(
-                        children: [
-                          Icon(
-                            Icons.bloodtype,
-                            color: Colors.redAccent,
-                            size: 28,
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "O+",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Total Donasi Anda",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            "12 Kali",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text(
-                              "Pendonor Aktif",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const VerticalDivider(color: Colors.white24, width: 30),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Text(
-                          "Terakhir",
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          "12 Okt",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          "2025",
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModernNewsCard(
+  Widget _buildNewsItem(
     BuildContext context, {
     required String title,
     required String category,
-    required IconData imageIcon,
-    required VoidCallback onTap,
+    required String date,
+    required String imageUrl,
   }) {
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Icon(imageIcon, color: Colors.redAccent, size: 28),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          category,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: Colors.grey.shade800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(Icons.chevron_right, color: Colors.grey.shade300),
-              ],
+      child: Row(
+        children: [
+          Container(
+            height: 80,
+            width: 80,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(16),
             ),
+            child: Icon(Icons.image, color: Colors.grey.shade400, size: 32),
           ),
-        ),
-      ),
-    );
-  }
-
-  void _showNewsDetail(BuildContext context, String title) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text(
-          "Ini adalah detail informasi/berita. Konten lengkap berita akan ditampilkan di sini dengan layout yang lebih detail.",
-          style: TextStyle(height: 1.5),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              "Tutup",
-              style: TextStyle(color: Colors.redAccent),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        category,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red.shade700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      date,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800,
+                    height: 1.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],

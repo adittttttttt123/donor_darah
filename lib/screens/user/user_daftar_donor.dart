@@ -193,6 +193,9 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
         tanggal,
       );
 
+      // Add to personal history
+      userController.addRiwayat(lokasi, tanggal);
+
       Navigator.pushNamed(
         context,
         '/daftar_sukses',

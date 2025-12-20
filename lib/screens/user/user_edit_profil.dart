@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import '../../controllers/user_controller.dart';
-import '../../core/app_theme.dart';
 
 class UserEditProfilScreen extends StatefulWidget {
   const UserEditProfilScreen({super.key});
@@ -16,11 +15,10 @@ class UserEditProfilScreen extends StatefulWidget {
 class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controller untuk field input
   late TextEditingController _namaController;
   late TextEditingController _noHpController;
   late TextEditingController _tglLahirController;
-  late TextEditingController _alamatController; // New controller
+  late TextEditingController _alamatController;
 
   String _selectedGolongan = "A+";
   final List<String> _golonganDarahList = [
@@ -36,7 +34,6 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
 
   final UserController _userController = Get.find<UserController>();
 
-  // Gambar profil
   Uint8List? _imageBytes;
   // ignore: unused_field
   String? _imagePath;
@@ -46,7 +43,6 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
     super.initState();
     _namaController = TextEditingController(text: _userController.nama.value);
     _selectedGolongan = _userController.golDarah.value;
-    // Validate if initial value is in list
     if (!_golonganDarahList.contains(_selectedGolongan)) {
       _selectedGolongan = _golonganDarahList.first;
     }
@@ -62,41 +58,43 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F8),
+      backgroundColor: Colors.white, // Clean White
       appBar: AppBar(
-        title: const Text("Edit Profil"),
+        title: const Text(
+          "Edit Profil",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 4,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30),
-          child: Container(
-            width: 500,
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  // ignore: deprecated_member_use
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  // FOTO PROFIL
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      CircleAvatar(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // FOTO PROFIL
+              Center(
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      height: 120,
+                      width: 120,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.red.shade100,
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
                         radius: 55,
                         backgroundColor: Colors.grey.shade200,
                         backgroundImage: _imageBytes != null
@@ -106,152 +104,133 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                                   )
                                   as ImageProvider,
                       ),
-                      IconButton(
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 3),
+                      ),
+                      child: IconButton(
                         onPressed: _gantiFotoProfil,
-                        icon: const Icon(Icons.camera_alt, color: Colors.white),
-                        style: IconButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 20,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Nama
-                  _buildTextField(
-                    controller: _namaController,
-                    label: "Nama Lengkap",
-                    icon: Icons.person,
-                  ),
-
-                  // Golongan Darah Dropdown
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _selectedGolongan,
-                      items: _golonganDarahList
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedGolongan = value!;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Golongan Darah",
-                        prefixIcon: const Icon(
-                          Icons.bloodtype,
-                          color: AppTheme.primaryColor,
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.grey),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppTheme.primaryColor,
-                          ),
+                        constraints: const BoxConstraints(
+                          minWidth: 40,
+                          minHeight: 40,
                         ),
                       ),
                     ),
-                  ),
-
-                  // Nomor HP
-                  _buildTextField(
-                    controller: _noHpController,
-                    label: "Nomor HP",
-                    icon: Icons.phone_android,
-                    keyboardType: TextInputType.phone,
-                  ),
-
-                  // Tanggal Lahir
-                  GestureDetector(
-                    onTap: _pilihTanggalLahir,
-                    child: AbsorbPointer(
-                      child: _buildTextField(
-                        controller: _tglLahirController,
-                        label: "Tanggal Lahir",
-                        icon: Icons.calendar_month,
-                      ),
-                    ),
-                  ),
-
-                  // Alamat TextField (Free Text)
-                  _buildTextField(
-                    controller: _alamatController,
-                    label: "Alamat Lengkap",
-                    icon: Icons.location_on,
-                    keyboardType: TextInputType.streetAddress,
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  // Tombol Simpan
-                  FilledButton.icon(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _userController.updateProfile(
-                          newNama: _namaController.text,
-                          newGolDarah: _selectedGolongan,
-                          newNoHp: _noHpController.text,
-                          newTglLahir: _tglLahirController.text,
-                          newAlamat: _alamatController.text,
-                          newImageBytes: _imageBytes,
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Perubahan profil berhasil disimpan!",
-                            ),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    icon: const Icon(Icons.save),
-                    label: const Text("Simpan Perubahan"),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppTheme.primaryColor,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  // Tombol Batal
-                  OutlinedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.cancel_outlined),
-                    label: const Text("Batal"),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.primaryColor,
-                      side: const BorderSide(color: AppTheme.primaryColor),
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(height: 32),
+
+              _buildTextField(
+                controller: _namaController,
+                label: "Nama Lengkap",
+                icon: Icons.person_outline_rounded,
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: DropdownButtonFormField<String>(
+                  initialValue: _selectedGolongan,
+                  items: _golonganDarahList
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  onChanged: (value) =>
+                      setState(() => _selectedGolongan = value!),
+                  decoration: InputDecoration(
+                    labelText: "Golongan Darah",
+                    prefixIcon: const Icon(
+                      Icons.bloodtype_outlined,
+                      color: Colors.redAccent,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade50,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.all(16),
+                  ),
+                ),
+              ),
+
+              _buildTextField(
+                controller: _noHpController,
+                label: "Nomor HP",
+                icon: Icons.phone_android_rounded,
+                keyboardType: TextInputType.phone,
+              ),
+
+              GestureDetector(
+                onTap: _pilihTanggalLahir,
+                child: AbsorbPointer(
+                  child: _buildTextField(
+                    controller: _tglLahirController,
+                    label: "Tanggal Lahir",
+                    icon: Icons.calendar_today_rounded,
+                  ),
+                ),
+              ),
+
+              _buildTextField(
+                controller: _alamatController,
+                label: "Alamat Lengkap",
+                icon: Icons.location_on_outlined,
+                keyboardType: TextInputType.streetAddress,
+              ),
+
+              const SizedBox(height: 40),
+
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: FilledButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _userController.updateProfile(
+                        newNama: _namaController.text,
+                        newGolDarah: _selectedGolongan,
+                        newNoHp: _noHpController.text,
+                        newTglLahir: _tglLahirController.text,
+                        newAlamat: _alamatController.text,
+                        newImageBytes: _imageBytes,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Profil berhasil diperbarui"),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text(
+                    "Simpan Perubahan",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // Fungsi textfield reusable
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -265,14 +244,14 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: AppTheme.primaryColor),
+          prefixIcon: Icon(icon, color: Colors.grey.shade400),
           filled: true,
-          fillColor: const Color(0xFFF9FAFB),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppTheme.primaryColor),
+          fillColor: Colors.grey.shade50,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
           ),
+          contentPadding: const EdgeInsets.all(16),
         ),
         validator: (value) =>
             value == null || value.isEmpty ? "Harap isi $label" : null,
@@ -280,7 +259,6 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
     );
   }
 
-  // Date picker
   Future<void> _pilihTanggalLahir() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -290,9 +268,7 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryColor,
-            ),
+            colorScheme: const ColorScheme.light(primary: Colors.redAccent),
           ),
           child: child!,
         );
@@ -307,7 +283,6 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
     }
   }
 
-  // Ambil foto dari galeri (web)
   Future<void> _gantiFotoProfil() async {
     final ImagePicker picker = ImagePicker();
     final XFile? file = await picker.pickImage(source: ImageSource.gallery);

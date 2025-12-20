@@ -14,85 +14,88 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text("Pengaturan"),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
+        title: const Text(
+          "Pengaturan",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(24),
         children: [
-          _buildSettingsItem(
-            icon: Icons.person,
+          _buildSectionHeader("Akun Saya"),
+          const SizedBox(height: 12),
+          _buildModernSettingItem(
+            icon: Icons.person_outline_rounded,
             title: "Profil Saya",
+            subtitle: "Lihat dan atur profil Anda",
+            onTap: () => Navigator.pushNamed(context, '/profil'),
+          ),
+          const SizedBox(height: 12),
+          _buildModernSettingItem(
+            icon: Icons.lock_reset_rounded,
+            title: "Ganti Password",
+            subtitle: "Ubah kata sandi akun Anda",
             onTap: () {
-              Navigator.pushNamed(context, '/profil');
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Fitur Ganti Password akan segera hadir"),
+                ),
+              );
             },
           ),
-          _buildSettingsItem(
-            icon: Icons.dark_mode,
+          const SizedBox(height: 24),
+          _buildSectionHeader("Preferensi"),
+          const SizedBox(height: 12),
+          _buildModernSettingItem(
+            icon: Icons.dark_mode_outlined,
             title: "Tema Gelap",
+            subtitle: "Sesuaikan tampilan aplikasi",
             trailing: Switch(
               value: isDarkTheme,
-              activeThumbColor: AppTheme.primaryColor,
+              activeColor: AppTheme.primaryColor,
               onChanged: (value) {
-                setState(() {
-                  isDarkTheme = value;
-                });
+                setState(() => isDarkTheme = value);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Fitur ganti tema belum tersedia penuh"),
+                    behavior: SnackBarBehavior.floating,
                   ),
                 );
               },
             ),
             onTap: () {},
           ),
-          const Divider(),
-          _buildSettingsItem(
-            icon: Icons.help,
+          const SizedBox(height: 24),
+          _buildSectionHeader("Dukungan"),
+          const SizedBox(height: 12),
+          _buildModernSettingItem(
+            icon: Icons.help_outline_rounded,
             title: "Bantuan & Dukungan",
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Bantuan & Dukungan"),
-                  content: const Text(
-                    "Jika Anda mengalami kendala, silakan hubungi kami di support@donordarah.com",
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Tutup"),
-                    ),
-                  ],
-                ),
-              );
-            },
+            subtitle: "Butuh bantuan? Hubungi kami",
+            onTap: () => _showHelpDialog(context),
           ),
-          _buildSettingsItem(
-            icon: Icons.info,
+          const SizedBox(height: 12),
+          _buildModernSettingItem(
+            icon: Icons.info_outline_rounded,
             title: "Tentang Aplikasi",
-            onTap: () {
-              showAboutDialog(
-                context: context,
-                applicationName: "Donor Darah App",
-                applicationVersion: "1.0.0",
-                applicationIcon: const Icon(Icons.bloodtype, color: Colors.red),
-                children: const [
-                  Text("Aplikasi untuk memudahkan donor darah."),
-                ],
-              );
-            },
+            subtitle: "Versi 1.0.0",
+            onTap: () => _showAboutDialog(context),
           ),
-          _buildSettingsItem(
-            icon: Icons.logout,
+          const SizedBox(height: 24),
+          _buildModernSettingItem(
+            icon: Icons.logout_rounded,
             title: "Keluar Akun",
+            subtitle: "Keluar dari sesi ini",
+            iconColor: Colors.redAccent,
+            textColor: Colors.redAccent,
+            isDestructive: true,
             onTap: () {
-              // Using Get.offAllNamed since GetX is used elsewhere,
-              // or Navigator.pushNamedAndRemoveUntil if Get context is tricky,
-              // but project seems to use Get generally or mixed.
-              // The profile page used Get.offAllNamed('/').
               Navigator.of(
                 context,
               ).pushNamedAndRemoveUntil('/', (route) => false);
@@ -103,24 +106,150 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildSettingsItem({
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade500,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernSettingItem({
     required IconData icon,
     required String title,
+    String? subtitle,
     required VoidCallback onTap,
     Widget? trailing,
+    Color? iconColor,
+    Color? textColor,
+    bool isDestructive = false,
   }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.red.shade50,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: AppTheme.primaryColor),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100), // Add subtle border
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.02), // Very subtle shadow
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-      trailing: trailing ?? const Icon(Icons.chevron_right, color: Colors.grey),
-      onTap: onTap,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isDestructive
+                        ? Colors.red.shade50
+                        : Colors.red.shade50, // Red tint
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: iconColor ?? Colors.redAccent, // Red Accent
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: textColor ?? Colors.grey.shade800,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (trailing != null)
+                  trailing
+                else
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.grey.shade300,
+                    size: 20,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Bantuan & Dukungan"),
+        content: const Text(
+          "Jika Anda mengalami kendala, silakan hubungi kami di support@donordarah.com",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "Tutup",
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: "Donor Darah App",
+      applicationVersion: "1.0.0",
+      applicationIcon: const Icon(
+        Icons.favorite,
+        color: Colors.redAccent,
+        size: 40,
+      ),
+      children: const [
+        Padding(
+          padding: EdgeInsets.only(top: 16),
+          child: Text(
+            "Aplikasi ini dibuat untuk memudahkan masyarakat dalam melakukan kegiatan donor darah dan mengakses informasi terkait stok darah.",
+            textAlign: TextAlign.justify,
+          ),
+        ),
+      ],
     );
   }
 }

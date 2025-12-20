@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/app_theme.dart';
-import '../widgets/user_navbar.dart';
 
 class UserJadwalScreen extends StatefulWidget {
   const UserJadwalScreen({super.key});
@@ -78,7 +77,7 @@ class _UserJadwalScreenState extends State<UserJadwalScreen> {
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
       ),
-      bottomNavigationBar: const UserNavBar(currentIndex: 1),
+
       body: Column(
         children: [
           Padding(

@@ -22,7 +22,6 @@ import 'screens/admin/jadwal_donor_page.dart';
 import 'screens/admin/form_jadwal_page.dart';
 import 'screens/admin/detail_pendonor_page.dart';
 
-import 'controllers/data_controller.dart';
 import 'controllers/user_controller.dart';
 
 // ignore: depend_on_referenced_packages
@@ -32,13 +31,18 @@ void main() async {
   setUrlStrategy(PathUrlStrategy());
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: 'YOUR_SUPABASE_URL',
-    anonKey: 'YOUR_SUPABASE_ANON_KEY',
-  );
+  try {
+    await Supabase.initialize(
+      url: 'YOUR_SUPABASE_URL',
+      anonKey: 'YOUR_SUPABASE_ANON_KEY',
+    );
+  } catch (e) {
+    debugPrint("Supabase init failed: $e");
+    // Continue despite error so UI still shows
+  }
 
-  Get.put(UserController()); // Existing user controller
-  Get.put(DataController()); // New global data controller
+  Get.put(UserController());
+  // Get.put(DataController()); // Moved to Dashboard to prevent context issues
   runApp(const DonorDarahUserApp());
 }
 
@@ -51,7 +55,7 @@ class DonorDarahUserApp extends StatelessWidget {
       title: 'DonorDarahApp User',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      initialRoute: '/user_register',
+      initialRoute: '/',
       routes: {
         '/user_register': (context) => const UserRegisterScreen(),
         '/': (context) => const UserLoginScreen(),

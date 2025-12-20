@@ -2,27 +2,33 @@ import 'package:flutter/material.dart';
 
 class UserNavBar extends StatelessWidget {
   final int currentIndex;
-  const UserNavBar({super.key, required this.currentIndex});
+  final Function(int) onTap;
+
+  const UserNavBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final items = [
-      {'icon': Icons.home_rounded, 'label': 'Beranda', 'route': '/dashboard'},
-      {'icon': Icons.event_rounded, 'label': 'Jadwal', 'route': '/jadwal'},
-      {'icon': Icons.history_rounded, 'label': 'Riwayat', 'route': '/riwayat'},
-      {'icon': Icons.person_rounded, 'label': 'Profil', 'route': '/profil'},
+      {'icon': Icons.home_rounded, 'label': 'Beranda'},
+      {'icon': Icons.calendar_today_rounded, 'label': 'Jadwal'},
+      {'icon': Icons.history_rounded, 'label': 'Riwayat'},
+      {'icon': Icons.settings_rounded, 'label': 'Pengaturan'},
     ];
 
     return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      margin: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 30,
             offset: const Offset(0, 10),
           ),
         ],
@@ -33,23 +39,18 @@ class UserNavBar extends StatelessWidget {
           final item = items[index];
           final isSelected = currentIndex == index;
           return GestureDetector(
-            onTap: () {
-              if (!isSelected) {
-                Navigator.pushReplacementNamed(
-                  context,
-                  item['route'] as String,
-                );
-              }
-            },
+            onTap: () => onTap(index),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
+              curve: Curves.fastOutSlowIn,
               padding: isSelected
-                  ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
-                  : const EdgeInsets.all(8),
+                  ? const EdgeInsets.symmetric(horizontal: 20, vertical: 12)
+                  : const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Colors.redAccent.withOpacity(0.1)
+                    ? Colors
+                          .red
+                          .shade50 // Red tint
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -57,7 +58,7 @@ class UserNavBar extends StatelessWidget {
                 children: [
                   Icon(
                     item['icon'] as IconData,
-                    color: isSelected ? Colors.redAccent : Colors.grey,
+                    color: isSelected ? Colors.redAccent : Colors.grey.shade400,
                     size: 24,
                   ),
                   if (isSelected) ...[
@@ -67,6 +68,7 @@ class UserNavBar extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.redAccent,
                         fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
                     ),
                   ],

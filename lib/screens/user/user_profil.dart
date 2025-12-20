@@ -1,170 +1,202 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'user_edit_profil.dart';
 import '../../controllers/user_controller.dart';
-import '../../core/app_theme.dart';
+import 'user_edit_profil.dart';
 
 class UserProfilScreen extends StatelessWidget {
   const UserProfilScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(UserController());
+    final UserController controller = Get.find();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F8),
-
+      backgroundColor: Colors.white, // Clean White
       appBar: AppBar(
-        title: const Text("Profil Pengguna"),
-        centerTitle: true,
-        elevation: 4,
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black),
           onPressed: () {
-            Get.offNamed('/dashboard');
+            // Because this might be in a tab, we need to check how to go 'back'.
+            // If it was pushed from Settings, simple pop works.
+            Navigator.pop(context);
           },
         ),
+        title: const Text(
+          "Profil Saya",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
       ),
-
-      body: Center(
+      body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30),
-          child: Container(
-            width: 500,
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  // ignore: deprecated_member_use
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Obx(
-                  () => CircleAvatar(
-                    radius: 60,
-                    backgroundImage: controller.profileImageBytes.value != null
-                        ? MemoryImage(controller.profileImageBytes.value!)
-                        : NetworkImage(controller.profileImage.value)
-                              as ImageProvider,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // NAMA — dikosongkan
-                Obx(
-                  () => Text(
-                    controller.nama.value,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                        border: Border.all(color: Colors.grey.shade100),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/logo_donor.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    Obx(
+                      () => Text(
+                        controller.nama.value,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "Pendonor Aktif",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-
-                Obx(
-                  () => Text(
-                    "Golongan Darah: ${controller.golDarah.value}",
-                    style: const TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-                const Divider(height: 30, thickness: 1.2),
-
-                // DETAIL INFORMASI — dikosongkan
-                Obx(
-                  () => _infoTile(
-                    Icons.phone_android,
-                    "Nomor HP",
-                    controller.noHp.value,
-                  ),
-                ),
-                Obx(
-                  () =>
-                      _infoTile(Icons.home, "Alamat", controller.alamat.value),
-                ),
-                Obx(
-                  () => _infoTile(
-                    Icons.calendar_month,
-                    "Tanggal Lahir",
-                    controller.tglLahir.value,
-                  ),
-                ),
-
-                const SizedBox(height: 25),
-
-                FilledButton.icon(
+              ),
+              const SizedBox(height: 40),
+              _buildSimpleInfoTile(
+                Icons.bloodtype_rounded,
+                "Golongan Darah",
+                controller.golDarah,
+              ),
+              const SizedBox(height: 16),
+              _buildSimpleInfoTile(
+                Icons.phone_rounded,
+                "Nomor HP",
+                controller.noHp,
+              ),
+              const SizedBox(height: 16),
+              _buildSimpleInfoTile(
+                Icons.calendar_month_rounded,
+                "Tanggal Lahir",
+                controller.tglLahir,
+              ),
+              const SizedBox(height: 16),
+              _buildSimpleInfoTile(
+                Icons.location_on_rounded,
+                "Alamat",
+                controller.alamat,
+              ),
+              const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: OutlinedButton(
                   onPressed: () {
-                    Get.to(() => const UserEditProfilScreen());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UserEditProfilScreen(),
+                      ),
+                    );
                   },
-                  icon: const Icon(Icons.edit),
-                  label: const Text("Edit Profil"),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    minimumSize: const Size(double.infinity, 50),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.redAccent,
+                    side: BorderSide(color: Colors.redAccent.withOpacity(0.5)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
+                  child: const Text(
+                    "Edit Profil",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  static Widget _infoTile(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB),
-          borderRadius: BorderRadius.circular(12),
-          // ignore: deprecated_member_use
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: AppTheme.primaryColor),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+  Widget _buildSimpleInfoTile(IconData icon, String label, RxString value) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.redAccent, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade500,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 15,
+                ),
+                const SizedBox(height: 4),
+                Obx(
+                  () => Text(
+                    value.value,
+                    style: TextStyle(
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Colors.grey.shade800,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

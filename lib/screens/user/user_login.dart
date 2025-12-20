@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../widgets/loading_overlay.dart';
-import '../../widgets/custom_toast.dart';
 
 class UserLoginScreen extends StatefulWidget {
   const UserLoginScreen({super.key});
@@ -18,7 +17,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   void login() {
     if (emailController.text.trim().isEmpty ||
         passwordController.text.trim().isEmpty) {
-      CustomToast.show(context, 'Harap isi semua kolom', isError: true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Harap isi semua kolom'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
@@ -36,7 +40,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     return LoadingOverlay(
       isLoading: isLoading,
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: Colors.white,
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -50,7 +54,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     borderRadius: BorderRadius.circular(32),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.redAccent.withOpacity(0.1),
+                        color: Colors.grey.withOpacity(
+                          0.1,
+                        ), // Softer shadow on white
                         blurRadius: 30,
                         offset: const Offset(0, 15),
                       ),
@@ -59,62 +65,78 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                   child: Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.red.shade50,
+                          color: Colors.white,
                           shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                        child: const Icon(
-                          Icons.bloodtype_rounded,
-                          size: 60,
-                          color: Colors.redAccent,
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/logo_donor.jpg',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
                       const Text(
-                        'Selamat Datang',
+                        "Selamat Datang",
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Colors.redAccent, // Red
                           letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Silakan masuk untuk melanjutkan',
+                        "Silakan masuk untuk melanjutkan",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey.shade500,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 48),
+
+                      // Inputs
                       _buildModernTextField(
                         controller: emailController,
-                        label: 'Email Address',
+                        label: "Email",
                         icon: Icons.email_outlined,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
                       _buildModernTextField(
                         controller: passwordController,
-                        label: 'Password',
+                        label: "Password",
                         icon: Icons.lock_outline,
                         isPassword: true,
                       ),
                       const SizedBox(height: 12),
+
+                      // Forgot Password
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
                           onPressed: () {
                             _showForgotPasswordDialog(context);
                           },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.redAccent,
+                          child: Text(
+                            "Lupa Password?",
+                            style: TextStyle(color: Colors.red.shade400),
                           ),
-                          child: const Text('Lupa Kata Sandi?'),
                         ),
                       ),
                       const SizedBox(height: 24),
+
+                      // Button
                       SizedBox(
                         width: double.infinity,
                         height: 56,
@@ -124,31 +146,42 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             backgroundColor: Colors.redAccent,
                             foregroundColor: Colors.white,
                             elevation: 8,
-                            shadowColor: Colors.redAccent.withOpacity(0.5),
+                            shadowColor: Colors.redAccent.withOpacity(0.4),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          child: const Text(
-                            'Masuk Sekarang',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  "Masuk",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
+
+                      // Social Login
                       Row(
                         children: [
                           Expanded(child: Divider(color: Colors.grey.shade200)),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
-                              "atau lanjutkan dengan",
+                              "Atau masuk dengan",
                               style: TextStyle(
-                                color: Colors.grey.shade400,
-                                fontSize: 13,
+                                color: Colors.grey.shade500,
+                                fontSize: 12,
                               ),
                             ),
                           ),
@@ -167,9 +200,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                           ),
                           const SizedBox(width: 16),
                           _socialButton(
-                            icon: Icons.facebook,
-                            color: Colors.blue,
-                            label: "Facebook",
+                            icon: Icons.apple,
+                            color: Colors.black,
+                            label: "Apple",
                             onTap: () {},
                           ),
                         ],
@@ -177,26 +210,29 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/user_register');
-                  },
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Belum punya akun? ',
+                const SizedBox(height: 48),
+
+                // Register Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Belum punya akun? ",
                       style: TextStyle(color: Colors.grey.shade600),
-                      children: const [
-                        TextSpan(
-                          text: 'Daftar Disini',
-                          style: TextStyle(
-                            color: Colors.redAccent,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/user_register');
+                      },
+                      child: const Text(
+                        "Daftar",
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

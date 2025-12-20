@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../core/app_theme.dart';
-import 'package:donor_darah/screens/widgets/user_navbar.dart';
+import 'package:get/get.dart';
+import '../../controllers/user_controller.dart';
 
 class UserRiwayatScreen extends StatelessWidget {
   const UserRiwayatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> riwayat = [];
+    // Get controller
+    final UserController userController = Get.find();
 
     return Scaffold(
       appBar: AppBar(
@@ -16,46 +18,88 @@ class UserRiwayatScreen extends StatelessWidget {
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
       ),
-      bottomNavigationBar: const UserNavBar(currentIndex: 2),
-      body: riwayat.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.history, size: 80, color: Colors.grey.shade300),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Belum ada riwayat donor",
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+      body: Obx(() {
+        if (userController.riwayatDonor.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.history_rounded,
+                  size: 80,
+                  color: Colors.grey.shade300,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Belum ada riwayat donor",
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(20),
+          itemCount: userController.riwayatDonor.length,
+          itemBuilder: (context, i) {
+            final item = userController.riwayatDonor[i];
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
+                border: Border.all(color: Colors.grey.shade100),
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: riwayat.length,
-              itemBuilder: (context, i) {
-                final item = riwayat[i];
-                return Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    shape: BoxShape.circle,
                   ),
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.history,
-                      color: AppTheme.primaryColor,
-                    ),
-                    title: Text(
-                      item['tempat']!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(item['tgl']!),
+                  child: const Icon(
+                    Icons.bloodtype_rounded,
+                    color: AppTheme.primaryColor,
                   ),
-                );
-              },
-            ),
+                ),
+                title: Text(
+                  item['tempat'] ?? '-',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.calendar_today_rounded,
+                        size: 14,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        item['tgl'] ?? '-',
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 }
