@@ -10,36 +10,29 @@ class DataPendonorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<DataController>();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Data Pendonor"),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
-      ),
-      body: Obx(
-        () => ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            // Search Bar
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Cari pendonor...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+    return Obx(
+      () => ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Search Bar
+          TextField(
+            decoration: InputDecoration(
+              hintText: "Cari pendonor...",
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            const SizedBox(height: 20),
+          ),
+          const SizedBox(height: 20),
 
-            // List contoh pendonor
-            ...controller.pendonorList.asMap().entries.map((entry) {
-              final index = entry.key;
-              final item = entry.value;
-              return _buildPendonorTile(context, index, item);
-            }),
-          ],
-        ),
+          // List contoh pendonor
+          ...controller.pendonorList.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            return _buildPendonorTile(context, index, item);
+          }),
+        ],
       ),
     );
   }

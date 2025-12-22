@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../controllers/data_controller.dart';
 import '../../core/app_theme.dart';
 
 class LoginAdminPage extends StatefulWidget {
@@ -24,6 +26,18 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
 
       Future.delayed(const Duration(seconds: 1), () {
         if (_emailC.text == adminEmail && _passC.text == adminPass) {
+          // Initialize DataController for Admin Dashboard
+          if (!Get.isRegistered<DataController>()) {
+            // Import is needed at top, but Get.put works dynamically if imported.
+            // We need to add import 'package:get/get.dart' and import '../../controllers/data_controller.dart'
+            // I will do that in a separate replacement or rely on existing imports if any.
+            // Wait, this file imports get via app_theme? No.
+            // I need to add imports first.
+          }
+          // Actually, let's just do it here assuming I fix imports.
+
+          Get.lazyPut(() => DataController());
+
           // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Login Admin Berhasil ✅")),

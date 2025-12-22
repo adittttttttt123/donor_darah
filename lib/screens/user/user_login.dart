@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 import '../../controllers/user_controller.dart';
@@ -15,6 +16,21 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   final emailController = TextEditingController(); // Cleared defaults
   final passwordController = TextEditingController(); // Cleared defaults
   bool isLoading = false;
+  int _secretTapCount = 0;
+
+  void _handleSecretTap() {
+    _secretTapCount++;
+    if (_secretTapCount == 5) {
+      _secretTapCount = 0;
+      Navigator.pushNamed(context, '/admin_login');
+      Get.snackbar(
+        "Admin Mode",
+        "Secret Access Unlocked 🔓",
+        backgroundColor: Colors.black87,
+        colorText: Colors.white,
+      );
+    }
+  }
 
   Future<void> login() async {
     // 1. Validate Form
@@ -72,7 +88,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
           Navigator.pushReplacementNamed(context, '/dashboard');
         }
       }
-    // ignore: unused_catch_clause
+      // ignore: unused_catch_clause
     } on AuthException catch (e) {
       Get.snackbar(
         "Gagal Masuk",
@@ -129,180 +145,199 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // ... Logo and Header (preserved structure, shortened for replacement if needed but keeping it safe)
-                  Container(
-                    padding: const EdgeInsets.all(40),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(32),
-                      boxShadow: [
-                        BoxShadow(
-                          // ignore: deprecated_member_use
-                          color: Colors.grey.withOpacity(0.1),
-                          blurRadius: 30,
-                          offset: const Offset(0, 15),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
+                  // Logo with Secret Gesture
+                  GestureDetector(
+                    onTap: _handleSecretTap,
+                    child: Container(
+                      padding: const EdgeInsets.all(40),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            // ignore: deprecated_member_use
+                            color: Colors.grey.withOpacity(0.1),
+                            blurRadius: 30,
+                            offset: const Offset(0, 15),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  // ignore: deprecated_member_use
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/images/logo_donor.jpg',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            "Selamat Datang",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Silakan masuk untuk melanjutkan",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                          const SizedBox(height: 48),
+
+                          // Inputs
+                          _buildModernTextField(
+                            controller: emailController,
+                            label: "Email",
+                            icon: Icons.email_outlined,
+                            validator: (value) => value == null || value.isEmpty
+                                ? "Email wajib diisi"
+                                : null,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildModernTextField(
+                            controller: passwordController,
+                            label: "Password",
+                            icon: Icons.lock_outline,
+                            isPassword: true,
+                            validator: (value) => value == null || value.isEmpty
+                                ? "Password wajib diisi"
+                                : null,
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Forgot Password
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                _showForgotPasswordDialog(context);
+                              },
+                              child: Text(
+                                "Lupa Password?",
+                                style: TextStyle(color: Colors.red.shade400),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Button
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: isLoading ? null : login,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                foregroundColor: Colors.white,
+                                elevation: 8,
                                 // ignore: deprecated_member_use
-                                color: Colors.grey.withOpacity(0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
+                                shadowColor: Colors.redAccent.withOpacity(0.4),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      "Masuk",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Social Login
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Divider(color: Colors.grey.shade200),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Text(
+                                  "Atau masuk dengan",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(color: Colors.grey.shade200),
                               ),
                             ],
                           ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/logo_donor.jpg',
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          "Selamat Datang",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Silakan masuk untuk melanjutkan",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey.shade500,
-                          ),
-                        ),
-                        const SizedBox(height: 48),
-
-                        // Inputs
-                        _buildModernTextField(
-                          controller: emailController,
-                          label: "Email",
-                          icon: Icons.email_outlined,
-                          validator: (value) => value == null || value.isEmpty
-                              ? "Email wajib diisi"
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildModernTextField(
-                          controller: passwordController,
-                          label: "Password",
-                          icon: Icons.lock_outline,
-                          isPassword: true,
-                          validator: (value) => value == null || value.isEmpty
-                              ? "Password wajib diisi"
-                              : null,
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Forgot Password
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              _showForgotPasswordDialog(context);
-                            },
-                            child: Text(
-                              "Lupa Password?",
-                              style: TextStyle(color: Colors.red.shade400),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton(
-                            onPressed: isLoading ? null : login,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              foregroundColor: Colors.white,
-                              elevation: 8,
-                              // ignore: deprecated_member_use
-                              shadowColor: Colors.redAccent.withOpacity(0.4),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _socialButton(
+                                icon: Icons.g_mobiledata,
+                                color: Colors.red,
+                                label: "Google",
+                                onTap: () {},
                               ),
-                            ),
-                            child: isLoading
-                                ? const SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text(
-                                    "Masuk",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                              const SizedBox(width: 16),
+                              _socialButton(
+                                icon: Icons.apple,
+                                color: Colors.black,
+                                label: "Apple",
+                                onTap: () {},
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 24),
 
-                        // Social Login
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(color: Colors.grey.shade200),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                          // ADMIN SHORTCUT (Visible only on Web)
+                          if (kIsWeb) ...[
+                            const SizedBox(height: 24),
+                            TextButton.icon(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/admin_login');
+                              },
+                              icon: const Icon(Icons.admin_panel_settings),
+                              label: const Text("Login Admin Portal"),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.black54,
                               ),
-                              child: Text(
-                                "Atau masuk dengan",
-                                style: TextStyle(
-                                  color: Colors.grey.shade500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(color: Colors.grey.shade200),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _socialButton(
-                              icon: Icons.g_mobiledata,
-                              color: Colors.red,
-                              label: "Google",
-                              onTap: () {},
-                            ),
-                            const SizedBox(width: 16),
-                            _socialButton(
-                              icon: Icons.apple,
-                              color: Colors.black,
-                              label: "Apple",
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 48),
