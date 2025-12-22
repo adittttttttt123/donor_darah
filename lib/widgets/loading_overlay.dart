@@ -20,6 +20,7 @@ class LoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Container(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.5),
             child: Center(
               child: Container(

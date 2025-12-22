@@ -49,6 +49,7 @@ class UserProfilScreen extends StatelessWidget {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
+                            // ignore: deprecated_member_use
                             color: Colors.grey.withOpacity(0.1),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
@@ -133,6 +134,7 @@ class UserProfilScreen extends StatelessWidget {
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.redAccent,
+                    // ignore: deprecated_member_use
                     side: BorderSide(color: Colors.redAccent.withOpacity(0.5)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),

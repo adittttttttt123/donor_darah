@@ -193,6 +193,7 @@ class _HomeContent extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.grey.withOpacity(0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
@@ -217,6 +218,7 @@ class _HomeContent extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.red.shade900.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
@@ -235,6 +237,7 @@ class _HomeContent extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -318,6 +321,7 @@ class _HomeContent extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: Colors.grey.withOpacity(0.05),
               blurRadius: 20,
               offset: const Offset(0, 10),
@@ -330,6 +334,7 @@ class _HomeContent extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
@@ -364,6 +369,7 @@ class _HomeContent extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../controllers/data_controller.dart';
 import '../../core/app_theme.dart';
 
 class UserJadwalScreen extends StatefulWidget {
@@ -9,62 +11,15 @@ class UserJadwalScreen extends StatefulWidget {
 }
 
 class _UserJadwalScreenState extends State<UserJadwalScreen> {
-  final List<Map<String, String>> _allJadwal = [
-    {
-      "tempat": "PMI Boyolali",
-      "tanggal": "10 Desember 2025",
-      "alamat": "Jl. Kates No. 10",
-      "jam": "08:00 - 12:00",
-    },
-    {
-      "tempat": "RSUD Pandan Arang",
-      "tanggal": "15 Desember 2025",
-      "alamat": "Jl. Kantil No. 5",
-      "jam": "09:00 - 13:00",
-    },
-    {
-      "tempat": "Kantor Kecamatan Mojosongo",
-      "tanggal": "18 Desember 2025",
-      "alamat": "Mojosongo",
-      "jam": "08:30 - 11:30",
-    },
-    {
-      "tempat": "Balai Desa Teras",
-      "tanggal": "20 Desember 2025",
-      "alamat": "Teras",
-      "jam": "09:00 - 14:00",
-    },
-    {
-      "tempat": "RS Indriati Boyolali",
-      "tanggal": "22 Desember 2025",
-      "alamat": "Mojosongo",
-      "jam": "10:00 - 15:00",
-    },
-  ];
-
-  List<Map<String, String>> _filteredJadwal = [];
+  final DataController dataController = Get.find(); // Use Global DataController
   final TextEditingController _searchController = TextEditingController();
+  final _searchQuery = "".obs;
 
   @override
   void initState() {
     super.initState();
-    _filteredJadwal = _allJadwal;
-  }
-
-  void _filterJadwal(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredJadwal = _allJadwal;
-      } else {
-        _filteredJadwal = _allJadwal
-            .where(
-              (item) =>
-                  item["tempat"]!.toLowerCase().contains(query.toLowerCase()) ||
-                  item["alamat"]!.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
-      }
-    });
+    // Ensure data is fresh
+    dataController.fetchData();
   }
 
   @override
@@ -84,7 +39,7 @@ class _UserJadwalScreenState extends State<UserJadwalScreen> {
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
-              onChanged: _filterJadwal,
+              onChanged: (value) => _searchQuery.value = value,
               decoration: InputDecoration(
                 hintText: "Cari lokasi donor...",
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
@@ -110,143 +65,163 @@ class _UserJadwalScreenState extends State<UserJadwalScreen> {
             ),
           ),
           Expanded(
-            child: _filteredJadwal.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 64,
-                          color: Colors.grey.shade400,
+            child: Obx(() {
+              final allJadwal = dataController.jadwalList;
+              final query = _searchQuery.value.toLowerCase();
+              final filteredJadwal = query.isEmpty
+                  ? allJadwal
+                  : allJadwal.where((item) {
+                      final tempat = (item["lokasi"] ?? "").toLowerCase();
+                      final tanggal = (item["tanggal"] ?? "").toLowerCase();
+                      return tempat.contains(query) || tanggal.contains(query);
+                    }).toList();
+
+              if (filteredJadwal.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 64,
+                        color: Colors.grey.shade400,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Lokasi tidak ditemukan",
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 16,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Lokasi tidak ditemukan",
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                itemCount: filteredJadwal.length,
+                itemBuilder: (context, index) {
+                  final item = filteredJadwal[index];
+                  // Adapter keys: 'lokasi' -> 'tempat' for view compatibility
+                  // Or just use item['lokasi']
+                  final tempat = item['lokasi'] ?? "-";
+                  final alamat = item['lokasi'] ?? "-"; // Simpler for now
+                  final tanggal = item['tanggal'] ?? "-";
+                  final jam = item['jam'] ?? "-";
+
+                  return Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    itemCount: _filteredJadwal.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredJadwal[index];
-                      return Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red.shade50,
-                                      borderRadius: BorderRadius.circular(12),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.local_hospital,
+                                  color: AppTheme.primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      tempat,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                    child: const Icon(
-                                      Icons.local_hospital,
-                                      color: AppTheme.primaryColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    const SizedBox(height: 4),
+                                    Row(
                                       children: [
-                                        Text(
-                                          item["tempat"]!,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                        const Icon(
+                                          Icons.location_on,
+                                          size: 14,
+                                          color: Colors.grey,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Expanded(
+                                          child: Text(
+                                            alamat,
+                                            style: TextStyle(
+                                              color: Colors.grey.shade600,
+                                              fontSize: 13,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.location_on,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                item["alamat"]!,
-                                                style: TextStyle(
-                                                  color: Colors.grey.shade600,
-                                                  fontSize: 13,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.access_time,
-                                              size: 14,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              item["tanggal"]!,
-                                              style: TextStyle(
-                                                color: Colors.grey.shade600,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ],
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              SizedBox(
-                                width: double.infinity,
-                                child: FilledButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/daftar_donor',
-                                      arguments: item,
-                                    );
-                                  },
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: AppTheme.primaryColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.access_time,
+                                          size: 14,
+                                          color: Colors.grey,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          "$tanggal • $jam",
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  child: const Text("Daftar Donor"),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/daftar_donor',
+                                  arguments: item,
+                                );
+                              },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppTheme.primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Daftar Donor"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),

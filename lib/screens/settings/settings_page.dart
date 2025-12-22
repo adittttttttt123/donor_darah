@@ -58,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: "Sesuaikan tampilan aplikasi",
             trailing: Switch(
               value: isDarkTheme,
-              activeColor: AppTheme.primaryColor,
+              activeThumbColor: AppTheme.primaryColor,
               onChanged: (value) {
                 setState(() => isDarkTheme = value);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -138,6 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
         border: Border.all(color: Colors.grey.shade100), // Add subtle border
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.02), // Very subtle shadow
             blurRadius: 10,
             offset: const Offset(0, 4),

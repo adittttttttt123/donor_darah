@@ -71,16 +71,7 @@ class DataController extends GetxController {
   }
 
   // --- Stok Darah ---
-  var stokDarah = <String, int>{
-    'A+': 40,
-    'A-': 12,
-    'B+': 50,
-    'B-': 9,
-    'AB+': 6,
-    'AB-': 2,
-    'O+': 82,
-    'O-': 18,
-  }.obs;
+  var stokDarah = <String, int>{}.obs;
 
   Future<void> updateStok(String gol, int amount) async {
     if (stokDarah.containsKey(gol)) {
@@ -104,12 +95,7 @@ class DataController extends GetxController {
   }
 
   // --- Data Pendonor ---
-  var pendonorList = <Map<String, String>>[
-    {'nama': 'Andi Setiawan', 'golongan': 'O+', 'terakhir': '2025-10-12'},
-    {'nama': 'Siti Aminah', 'golongan': 'A+', 'terakhir': '2025-09-20'},
-    {'nama': 'Budi Santoso', 'golongan': 'B+', 'terakhir': '2025-07-01'},
-    {'nama': 'Rina Marlina', 'golongan': 'AB-', 'terakhir': '2025-06-15'},
-  ].obs;
+  var pendonorList = <Map<String, String>>[].obs;
 
   Future<void> addPendonor(String nama, String gol, String tanggal) async {
     try {
@@ -126,11 +112,7 @@ class DataController extends GetxController {
   }
 
   // --- Jadwal Event ---
-  var jadwalList = <Map<String, String>>[
-    {'lokasi': 'RSUD Kota', 'tanggal': '2025-11-15', 'jam': '08:00 - 12:00'},
-    {'lokasi': 'Kampus ABC', 'tanggal': '2025-11-20', 'jam': '09:00 - 13:00'},
-    {'lokasi': 'Mall XYZ', 'tanggal': '2025-12-02', 'jam': '10:00 - 16:00'},
-  ].obs;
+  var jadwalList = <Map<String, String>>[].obs;
 
   Future<void> addJadwal(String lokasi, String tanggal, String jam) async {
     try {

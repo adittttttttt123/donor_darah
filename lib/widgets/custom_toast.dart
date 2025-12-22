@@ -24,7 +24,9 @@ class CustomToast extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: isError
+                  // ignore: deprecated_member_use
                   ? Colors.redAccent.withOpacity(0.3)
+                  // ignore: deprecated_member_use
                   : Colors.green.withOpacity(0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
@@ -32,7 +34,9 @@ class CustomToast extends StatelessWidget {
           ],
           border: Border.all(
             color: isError
+                // ignore: deprecated_member_use
                 ? Colors.redAccent.withOpacity(0.1)
+                // ignore: deprecated_member_use
                 : Colors.green.withOpacity(0.1),
             width: 1,
           ),

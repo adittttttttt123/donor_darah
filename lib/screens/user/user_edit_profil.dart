@@ -192,9 +192,9 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                 width: double.infinity,
                 height: 56,
                 child: FilledButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      _userController.updateProfile(
+                      await _userController.updateProfile(
                         newNama: _namaController.text,
                         newGolDarah: _selectedGolongan,
                         newNoHp: _noHpController.text,
@@ -203,13 +203,10 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                         newImageBytes: _imageBytes,
                       );
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Profil berhasil diperbarui"),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                      Navigator.pop(context);
+                      if (mounted) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      }
                     }
                   },
                   style: FilledButton.styleFrom(
