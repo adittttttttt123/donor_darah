@@ -90,11 +90,19 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       }
       // ignore: unused_catch_clause
     } on AuthException catch (e) {
+      String errorMessage = "Email atau password salah";
+      Color errorColor = const Color(0xFFD32F2F);
+
+      if (e.message.toLowerCase().contains("email not confirmed")) {
+        errorMessage = "Email belum dikonfirmasi. Cek inbox Anda.";
+        errorColor = Colors.orange.shade800;
+      }
+
       Get.snackbar(
         "Gagal Masuk",
-        "Email atau password salah", // More user friendly than e.message
+        errorMessage,
         snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFFD32F2F),
+        backgroundColor: errorColor,
         colorText: Colors.white,
         borderRadius: 16,
         margin: const EdgeInsets.all(16),
@@ -322,20 +330,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             ],
                           ),
 
-                          // ADMIN SHORTCUT (Visible only on Web)
-                          if (kIsWeb) ...[
-                            const SizedBox(height: 24),
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/admin_login');
-                              },
-                              icon: const Icon(Icons.admin_panel_settings),
-                              label: const Text("Login Admin Portal"),
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.black54,
-                              ),
-                            ),
-                          ],
+                          // ADMIN SHORTCUT REMOVED
+                          // Access via secret tap on logo only
                         ],
                       ),
                     ),

@@ -42,7 +42,7 @@ class UserModel {
       'gol_darah': golDarah,
       'tgl_lahir': tglLahir,
       'alamat': alamat,
-      // 'profile_image': profileImage, // Uncomment if you add this column to DB
+      'profile_image': profileImage,
     };
   }
 

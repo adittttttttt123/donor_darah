@@ -34,8 +34,8 @@ void main() async {
 
   try {
     await Supabase.initialize(
-      url: 'YOUR_SUPABASE_URL',
-      anonKey: 'YOUR_SUPABASE_ANON_KEY',
+      url: 'https://iwnlmogzfjeqxdbhutsd.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3bmxtb2d6ZmplcXhkYmh1dHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NTI2NTcsImV4cCI6MjA4MTUyODY1N30.5BHeuEbDeKToPBJkKp5a-oSZmnymBjiIgAN9qW4uiBo',
     );
   } catch (e) {
     debugPrint("Supabase init failed: $e");

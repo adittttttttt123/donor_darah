@@ -55,20 +55,35 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
     setState(() => isLoading = true);
 
     try {
-      // 1. Sign Up
+      // 1. Sign Up with Metadata
       final response = await Supabase.instance.client.auth.signUp(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
+        data: {
+          'nama': nameController.text.trim(),
+          'no_hp': phoneController.text.trim(),
+        },
       );
 
       // 2. Insert Profile (if signup successful and we have a user ID)
       if (response.user != null) {
-        await Supabase.instance.client.from('profiles').insert({
-          'id': response.user!.id,
-          'nama': nameController.text.trim(),
-          'email': emailController.text.trim(),
-          'no_hp': phoneController.text.trim(),
-        });
+        // Attempt to insert into profiles table
+        // This relies on RLS allowing insert, or the session being active.
+        // If email confirmation is enabled, the session might be null.
+        if (response.session != null) {
+          try {
+            await Supabase.instance.client.from('profiles').insert({
+              'id': response.user!.id,
+              'nama': nameController.text.trim(),
+              'email': emailController.text.trim(),
+              'no_hp': phoneController.text.trim(),
+            });
+          } catch (e) {
+            // If profile insert fails, we log it but don't block registration
+            // because we have metadata as fallback
+            debugPrint("Profile insert failed: $e");
+          }
+        }
 
         if (mounted) {
           Get.snackbar(

@@ -59,7 +59,7 @@ class UserController extends GetxController {
   }) async {
     // 1. Update Local State
     final oldUser = currentUser.value;
-    final newUser = oldUser.copyWith(
+    var newUser = oldUser.copyWith(
       nama: newNama,
       golDarah: newGolDarah,
       noHp: newNoHp,
@@ -70,7 +70,35 @@ class UserController extends GetxController {
 
     if (newImageBytes != null) {
       profileImageBytes.value = newImageBytes;
-      // TODO: Upload image to Storage and get URL
+      try {
+        final String path = '${newUser.id}/profile.jpg';
+        await Supabase.instance.client.storage
+            .from(
+              'profile_pictures',
+            ) // Ensure this bucket exists in your Supabase project
+            .uploadBinary(
+              path,
+              newImageBytes,
+              fileOptions: const FileOptions(
+                upsert: true,
+                contentType: 'image/jpeg',
+              ),
+            );
+        final String imageUrl = Supabase.instance.client.storage
+            .from('profile_pictures')
+            .getPublicUrl(path);
+
+        // Append timestamp to avoid caching issues
+        final String finalUrl =
+            '$imageUrl?t=${DateTime.now().millisecondsSinceEpoch}';
+
+        newUser = newUser.copyWith(profileImage: finalUrl);
+        currentUser.value = newUser;
+      } catch (e) {
+        // ignore: avoid_print
+        print("Error uploading image: $e");
+        Get.snackbar("Warning", "Gagal mengupload gambar: $e");
+      }
     }
 
     // 2. Persist to Supabase
