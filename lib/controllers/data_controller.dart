@@ -130,7 +130,7 @@ class DataController extends GetxController {
   // Computed Properties for Dashboard
   Future<void> seedDatabase() async {
     try {
-      // 20 Dummy Donors
+      // 20 Dummy Donors (Keep existing logic or expand if needed, but focus on schedules for now)
       final donors = [
         {'nama': 'Budi Santoso', 'golongan': 'A+', 'terakhir': '2025-01-10'},
         {'nama': 'Siti Aminah', 'golongan': 'B-', 'terakhir': '2025-02-15'},
@@ -156,65 +156,64 @@ class DataController extends GetxController {
 
       await _supabase.from('pendonor').insert(donors);
 
-      // 10 Dummy Schedules
-      final schedules = [
-        {
-          'lokasi': 'PMI Jakarta Pusat',
-          'tanggal': '2025-12-25',
-          'jam': '08:00 - 12:00',
-        },
-        {
-          'lokasi': 'RSUD Tangerang',
-          'tanggal': '2025-12-26',
-          'jam': '09:00 - 13:00',
-        },
-        {
-          'lokasi': 'Mall Grand Indonesia',
-          'tanggal': '2025-12-27',
-          'jam': '10:00 - 14:00',
-        },
-        {
-          'lokasi': 'Kantor Walikota Depok',
-          'tanggal': '2025-12-28',
-          'jam': '08:30 - 11:30',
-        },
-        {
-          'lokasi': 'Universitas Indonesia',
-          'tanggal': '2025-12-29',
-          'jam': '09:00 - 15:00',
-        },
-        {
-          'lokasi': 'GOR Bekasi',
-          'tanggal': '2025-12-30',
-          'jam': '08:00 - 12:00',
-        },
-        {
-          'lokasi': 'Masjid Istiqlal',
-          'tanggal': '2025-12-31',
-          'jam': '13:00 - 16:00',
-        },
-        {
-          'lokasi': 'Gereja Katedral',
-          'tanggal': '2026-01-01',
-          'jam': '08:00 - 11:00',
-        },
-        {
-          'lokasi': 'Stasiun Gambir',
-          'tanggal': '2026-01-02',
-          'jam': '09:00 - 14:00',
-        },
-        {
-          'lokasi': 'Bandara Soekarno-Hatta',
-          'tanggal': '2026-01-03',
-          'jam': '10:00 - 15:00',
-        },
+      // GENERATE 50+ DUMMY SCHEDULES
+      final locations = [
+        'PMI Kota Surakarta',
+        'Solo Paragon Mall',
+        'Balai Kota Surakarta',
+        'Universitas Sebelas Maret (UNS)',
+        'The Park Mall Solo Baru',
+        'Hartono Mall Solo Baru',
+        'RSUD Ir. Soekarno Sukoharjo',
+        'UMS (Pabelan)',
+        'Alun-Alun Kidul Boyolali',
+        'RSUD Pandan Arang Boyolali',
+        'Masjid Agung Klaten',
+        'Plaza Klaten',
+        'RSUP dr. Soeradji Tirtonegoro',
+        'Alun-Alun Karanganyar',
+        'Palur Plaza',
+        'Taman Pancasila Karanganyar',
+        'Alun-Alun Sasono Langen Putro Sragen',
+        'RSUD dr. Soehadi Prijonegoro Sragen',
+        'Pasar Gede Solo',
+        'Stasiun Solo Balapan',
       ];
+
+      final schedules = <Map<String, String>>[];
+      final now = DateTime.now();
+
+      for (int i = 0; i < 60; i++) {
+        final date = now.add(Duration(days: i));
+        final dateStr =
+            "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+
+        // Create 1-2 events per day
+        final eventsPerDay = (i % 3 == 0) ? 2 : 1;
+
+        for (int j = 0; j < eventsPerDay; j++) {
+          final location = locations[(i + j) % locations.length];
+          final startHour = 8 + (j * 2); // 08:00, 10:00
+          final endHour = startHour + 4; // 12:00, 14:00
+          final timeStr =
+              "${startHour.toString().padLeft(2, '0')}:00 - ${endHour.toString().padLeft(2, '0')}:00";
+
+          schedules.add({
+            'lokasi': location,
+            'tanggal': dateStr,
+            'jam': timeStr,
+          });
+        }
+      }
 
       await _supabase.from('jadwal').insert(schedules);
 
       // Refresh
       fetchData();
-      Get.snackbar("Sukses", "Data dummy berhasil ditambahkan!");
+      Get.snackbar(
+        "Sukses",
+        "Berhasil menambahkan ${donors.length} pendonor dan ${schedules.length} jadwal!",
+      );
     } catch (e) {
       Get.snackbar("Error", "Gagal menambahkan data dummy: $e");
     }

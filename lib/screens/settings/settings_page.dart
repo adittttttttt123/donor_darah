@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../core/app_theme.dart';
+import '../../controllers/theme_controller.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -56,19 +58,17 @@ class _SettingsPageState extends State<SettingsPage> {
             icon: Icons.dark_mode_outlined,
             title: "Tema Gelap",
             subtitle: "Sesuaikan tampilan aplikasi",
-            trailing: Switch(
-              value: isDarkTheme,
-              activeThumbColor: AppTheme.primaryColor,
-              onChanged: (value) {
-                setState(() => isDarkTheme = value);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Fitur ganti tema belum tersedia penuh"),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              },
-            ),
+            trailing: Obx(() {
+              // Get controller - ensure it's found (should be put in main)
+              final themeController = Get.find<ThemeController>();
+              return Switch(
+                value: themeController.isDarkMode,
+                activeThumbColor: AppTheme.primaryColor,
+                onChanged: (value) {
+                  themeController.toggleTheme();
+                },
+              );
+            }),
             onTap: () {},
           ),
           const SizedBox(height: 24),

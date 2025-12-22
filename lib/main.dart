@@ -28,26 +28,32 @@ import 'screens/admin/detail_pendonor_page.dart';
 
 // CONTROLLER
 import 'controllers/user_controller.dart';
+import 'controllers/theme_controller.dart';
+import 'package:get_storage/get_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init(); // Initialize Storage
 
   try {
     await Supabase.initialize(
       url: 'https://iwnlmogzfjeqxdbhutsd.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3bmxtb2d6ZmplcXhkYmh1dHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NTI2NTcsImV4cCI6MjA4MTUyODY1N30.5BHeuEbDeKToPBJkKp5a-oSZmnymBjiIgAN9qW4uiBo',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3bmxtb2d6ZmplcXhkYmh1dHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5NTI2NTcsImV4cCI6MjA4MTUyODY1N30.5BHeuEbDeKToPBJkKp5a-oSZmnymBjiIgAN9qW4uiBo',
     );
   } catch (e) {
     debugPrint("Supabase init failed: $e");
   }
 
   Get.put(UserController());
+  final themeController = Get.put(ThemeController()); // Put ThemeController
 
-  runApp(const DonorDarahUserApp());
+  runApp(DonorDarahUserApp(themeController: themeController));
 }
 
 class DonorDarahUserApp extends StatelessWidget {
-  const DonorDarahUserApp({super.key});
+  final ThemeController themeController;
+  const DonorDarahUserApp({super.key, required this.themeController});
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +61,8 @@ class DonorDarahUserApp extends StatelessWidget {
       title: 'Donor Darah',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme, // Add Dark Theme
+      themeMode: themeController.themeMode, // Use Controller Mode
       initialRoute: '/',
       routes: {
         '/': (context) => const UserLoginScreen(),
