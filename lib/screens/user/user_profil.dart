@@ -135,6 +135,7 @@ class UserProfilScreen extends StatelessWidget {
                       foregroundColor: Colors.redAccent,
                       // ignore: deprecated_member_use
                       side: BorderSide(
+                        // ignore: deprecated_member_use
                         color: Colors.redAccent.withOpacity(0.5),
                       ),
                       shape: RoundedRectangleBorder(
