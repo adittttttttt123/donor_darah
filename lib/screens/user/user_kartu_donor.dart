@@ -116,7 +116,11 @@ class UserKartuDonorScreen extends StatelessWidget {
                                             controller.profileImageBytes.value!,
                                           )
                                         : NetworkImage(
-                                                controller.profileImage.value,
+                                                controller
+                                                        .currentUser
+                                                        .value
+                                                        .profileImage ??
+                                                    "https://cdn-icons-png.flaticon.com/512/9131/9131529.png",
                                               )
                                               as ImageProvider,
                                   ),
@@ -129,7 +133,8 @@ class UserKartuDonorScreen extends StatelessWidget {
                                     children: [
                                       Obx(
                                         () => Text(
-                                          controller.nama.value.toUpperCase(),
+                                          controller.currentUser.value.nama
+                                              .toUpperCase(),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 18,
@@ -169,7 +174,7 @@ class UserKartuDonorScreen extends StatelessWidget {
                                     const SizedBox(height: 2),
                                     Obx(
                                       () => Text(
-                                        controller.golDarah.value,
+                                        controller.currentUser.value.golDarah,
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,

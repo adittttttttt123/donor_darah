@@ -36,124 +36,129 @@ class UserProfilScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            // ignore: deprecated_member_use
-                            color: Colors.grey.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
+          child: Obx(
+            () => Column(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              // ignore: deprecated_member_use
+                              color: Colors.grey.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                          border: Border.all(color: Colors.grey.shade100),
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/logo_donor.jpg'),
+                            fit: BoxFit.cover,
                           ),
-                        ],
-                        border: Border.all(color: Colors.grey.shade100),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/logo_donor.jpg'),
-                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Obx(
-                      () => Text(
-                        controller.nama.value,
+                      const SizedBox(height: 16),
+                      Text(
+                        controller.currentUser.value.nama,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "Pendonor Aktif",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.red.shade700,
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          "Pendonor Aktif",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red.shade700,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              _buildSimpleInfoTile(
-                Icons.bloodtype_rounded,
-                "Golongan Darah",
-                controller.golDarah,
-              ),
-              const SizedBox(height: 16),
-              _buildSimpleInfoTile(
-                Icons.phone_rounded,
-                "Nomor HP",
-                controller.noHp,
-              ),
-              const SizedBox(height: 16),
-              _buildSimpleInfoTile(
-                Icons.calendar_month_rounded,
-                "Tanggal Lahir",
-                controller.tglLahir,
-              ),
-              const SizedBox(height: 16),
-              _buildSimpleInfoTile(
-                Icons.location_on_rounded,
-                "Alamat",
-                controller.alamat,
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UserEditProfilScreen(),
+                const SizedBox(height: 40),
+                _buildSimpleInfoTile(
+                  Icons.bloodtype_rounded,
+                  "Golongan Darah",
+                  controller.currentUser.value.golDarah,
+                ),
+                const SizedBox(height: 16),
+                _buildSimpleInfoTile(
+                  Icons.phone_rounded,
+                  "Nomor HP",
+                  controller.currentUser.value.noHp,
+                ),
+                const SizedBox(height: 16),
+                _buildSimpleInfoTile(
+                  Icons.calendar_month_rounded,
+                  "Tanggal Lahir",
+                  controller.currentUser.value.tglLahir,
+                ),
+                const SizedBox(height: 16),
+                _buildSimpleInfoTile(
+                  Icons.location_on_rounded,
+                  "Alamat",
+                  controller.currentUser.value.alamat,
+                ),
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UserEditProfilScreen(),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.redAccent,
+                      // ignore: deprecated_member_use
+                      side: BorderSide(
+                        color: Colors.redAccent.withOpacity(0.5),
                       ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.redAccent,
-                    // ignore: deprecated_member_use
-                    side: BorderSide(color: Colors.redAccent.withOpacity(0.5)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      "Edit Profil",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    "Edit Profil",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSimpleInfoTile(IconData icon, String label, RxString value) {
+  Widget _buildSimpleInfoTile(IconData icon, String label, String value) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -185,14 +190,12 @@ class UserProfilScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Obx(
-                  () => Text(
-                    value.value,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade800,
-                    ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade800,
                   ),
                 ),
               ],

@@ -174,7 +174,7 @@ class _HomeContent extends StatelessWidget {
             const SizedBox(height: 4),
             Obx(
               () => Text(
-                controller.nama.value,
+                controller.currentUser.value.nama,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

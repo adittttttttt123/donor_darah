@@ -188,8 +188,8 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
 
       // Add to global state
       dataController.addPendonor(
-        userController.nama.value,
-        userController.golDarah.value,
+        userController.currentUser.value.nama,
+        userController.currentUser.value.golDarah,
         tanggal,
       );
 

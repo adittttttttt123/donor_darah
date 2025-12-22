@@ -41,17 +41,21 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
   @override
   void initState() {
     super.initState();
-    _namaController = TextEditingController(text: _userController.nama.value);
-    _selectedGolongan = _userController.golDarah.value;
+    _namaController = TextEditingController(
+      text: _userController.currentUser.value.nama,
+    );
+    _selectedGolongan = _userController.currentUser.value.golDarah;
     if (!_golonganDarahList.contains(_selectedGolongan)) {
       _selectedGolongan = _golonganDarahList.first;
     }
-    _noHpController = TextEditingController(text: _userController.noHp.value);
+    _noHpController = TextEditingController(
+      text: _userController.currentUser.value.noHp,
+    );
     _tglLahirController = TextEditingController(
-      text: _userController.tglLahir.value,
+      text: _userController.currentUser.value.tglLahir,
     );
     _alamatController = TextEditingController(
-      text: _userController.alamat.value,
+      text: _userController.currentUser.value.alamat,
     );
   }
 
