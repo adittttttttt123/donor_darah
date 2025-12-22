@@ -28,12 +28,17 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.aditya.donordarah"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+    applicationId = "com.aditya.donordarah"
+    minSdk = flutter.minSdkVersion
+    targetSdk = flutter.targetSdkVersion
+    versionCode = flutter.versionCode
+    versionName = flutter.versionName
+
+    ndk {
+        abiFilters.clear()
+        abiFilters += listOf("arm64-v8a")
     }
+}
 
     signingConfigs {
         create("release") {

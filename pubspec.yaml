@@ -2,7 +2,7 @@ name: donor_darah
 description: Aplikasi Donor Darah berbasis Flutter
 publish_to: 'none'
 
-version: 1.0.1+4
+version: 1.0.1+5
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
