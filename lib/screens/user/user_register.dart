@@ -239,8 +239,15 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         label: "No. Handphone",
                         icon: Icons.phone_android,
                         inputType: TextInputType.phone,
-                        validator: (v) =>
-                            v!.isEmpty ? "No. HP wajib diisi" : null,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return "No. HP wajib diisi";
+                          }
+                          if (v.length != 12) {
+                            return "No. HP harus terdiri dari 12 digit";
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 16),
                       _buildTextField(

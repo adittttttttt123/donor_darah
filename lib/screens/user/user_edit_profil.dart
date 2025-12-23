@@ -165,11 +165,37 @@ class _UserEditProfilScreenState extends State<UserEditProfilScreen> {
                 ),
               ),
 
-              _buildTextField(
-                controller: _noHpController,
-                label: "Nomor HP",
-                icon: Icons.phone_android_rounded,
-                keyboardType: TextInputType.phone,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: TextFormField(
+                  controller: _noHpController,
+                  keyboardType: TextInputType.phone,
+                  maxLength: 12, // Enforce max length input
+                  decoration: InputDecoration(
+                    labelText: "Nomor HP",
+                    prefixIcon: Icon(
+                      Icons.phone_android_rounded,
+                      color: Colors.grey.shade400,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade50,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.all(16),
+                    counterText: "", // Hide counter
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Harap isi Nomor HP";
+                    }
+                    if (value.length != 12) {
+                      return "Nomor HP harus 12 digit";
+                    }
+                    return null;
+                  },
+                ),
               ),
 
               GestureDetector(

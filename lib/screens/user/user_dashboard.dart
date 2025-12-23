@@ -59,7 +59,7 @@ class _HomeContent extends StatelessWidget {
           children: [
             _buildModernHeader(userController),
             const SizedBox(height: 32),
-            _buildBloodCard(),
+            _buildBloodCard(userController),
             const SizedBox(height: 32),
             Text(
               "Layanan",
@@ -137,10 +137,24 @@ class _HomeContent extends StatelessWidget {
             const SizedBox(height: 12),
             _buildNewsItem(
               context,
-              title: "Manfaat Donor Darah Bagi Jantung",
+              title: "Manfaat Donor Darah Bagi Kesehatan Jantung",
               category: "KESEHATAN",
               date: "2 Jam yang lalu",
-              imageUrl: "https://via.placeholder.com/150",
+              imageUrl:
+                  "https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1000&auto=format&fit=crop",
+              content: """
+Tahukah Anda bahwa mendonorkan darah secara teratur dapat memberikan manfaat besar bagi kesehatan jantung Anda?
+
+Sebuah penelitian yang diterbitkan dalam American Journal of Epidemiology menunjukkan bahwa pendonor darah aktif memiliki risiko 88% lebih rendah terkena serangan jantung. Hal ini disebabkan karena donor darah membantu mengurangi kelebihan zat besi dalam tubuh.
+
+Selain itu, donor darah juga membantu:
+1. Merangsang produksi sel darah merah baru.
+2. Membantu mendeteksi penyakit serius lebih dini melalui skrining darah.
+3. Membakar kalori (sekitar 650 kalori per donasi).
+4. Memberikan kepuasan batin karena telah membantu sesama.
+
+Jadi, jangan ragu untuk mendonorkan darah Anda secara rutin setiap 3 bulan sekali!
+              """,
             ),
             const SizedBox(height: 16),
             _buildNewsItem(
@@ -148,7 +162,21 @@ class _HomeContent extends StatelessWidget {
               title: "Jadwal Mobil Unit Keliling Minggu Ini",
               category: "EVENT",
               date: "Kemarin",
-              imageUrl: "https://via.placeholder.com/150",
+              imageUrl:
+                  "https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1000&auto=format&fit=crop",
+              content: """
+Halo Sahabat Donor! Berikut adalah jadwal Mobil Unit Keliling (MUK) untuk minggu ini di wilayah Solo Raya:
+
+- Senin: Depan Balai Kota Surakarta (08.00 - 12.00)
+- Selasa: Universitas Sebelas Maret, Gedung Rektorat (09.00 - 13.00)
+- Rabu: Solo Paragon Mall (10.00 - 14.00)
+- Kamis: Alun-Alun Karanganyar (08.00 - 11.00)
+- Jumat: Masjid Raya Klaten (Usai Sholat Jumat - 15.00)
+
+Pastikan Anda dalam kondisi sehat, sudah makan, dan cukup tidur sebelum mendonorkan darah. Jangan lupa bawa KTP Anda!
+
+Kami tunggu kedatangan Anda untuk berbagi kehidupan.
+              """,
             ),
           ],
         ),
@@ -209,7 +237,7 @@ class _HomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBloodCard() {
+  Widget _buildBloodCard(UserController controller) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -241,16 +269,20 @@ class _HomeContent extends StatelessWidget {
                   color: Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.verified, color: Colors.white, size: 16),
-                    SizedBox(width: 6),
-                    Text(
-                      "Pendonor Aktif",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                    const Icon(Icons.verified, color: Colors.white, size: 16),
+                    const SizedBox(width: 6),
+                    Obx(
+                      () => Text(
+                        controller.riwayatDonor.isNotEmpty
+                            ? "Pendonor Aktif"
+                            : "Pendonor Baru",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -260,23 +292,25 @@ class _HomeContent extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Golongan Darah",
                     style: TextStyle(color: Colors.white70, fontSize: 13),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    "O+",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(height: 4),
+                  Obx(
+                    () => Text(
+                      controller.currentUser.value.golDarah,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -284,17 +318,19 @@ class _HomeContent extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
+                  const Text(
                     "Total Donor",
                     style: TextStyle(color: Colors.white70, fontSize: 13),
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    "12x",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(height: 4),
+                  Obx(
+                    () => Text(
+                      "${controller.riwayatDonor.length}x",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -361,83 +397,106 @@ class _HomeContent extends StatelessWidget {
     required String category,
     required String date,
     required String imageUrl,
+    required String content,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.grey.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 80,
-            width: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(16),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          '/detail_berita',
+          arguments: {
+            'title': title,
+            'category': category,
+            'date': date,
+            'imageUrl': imageUrl,
+            'content': content,
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              // ignore: deprecated_member_use
+              color: Colors.grey.withOpacity(0.05),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
             ),
-            child: Icon(Icons.image, color: Colors.grey.shade400, size: 32),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red.shade700,
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 80,
+              width: 80,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                  onError: (obj, stack) {}, // Handle error silently
+                ),
+              ),
+              child:
+                  null, // Removed icon fallback inside, handled by NetworkImage error logic or placeholder if needed.
+              // For robustness, could wrap in ClipRRect and use Image.network with errorBuilder
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red.shade700,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      date,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
+                      const SizedBox(width: 8),
+                      Text(
+                        date,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade800,
-                    height: 1.3,
+                    ],
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade800,
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

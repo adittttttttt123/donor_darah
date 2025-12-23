@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 
 class UserController extends GetxController {
@@ -116,8 +117,47 @@ class UserController extends GetxController {
     riwayatDonor.clear();
   }
 
-  void addRiwayat(String tempat, String tanggal) {
-    riwayatDonor.add({'tempat': tempat, 'tgl': tanggal});
+  void addRiwayat({
+    required String tempat,
+    required String tanggal,
+    required String nik,
+    required String beratBadan,
+    required bool isSehat,
+    required bool tidakMinumObat,
+    required bool tidakHamil,
+  }) {
+    riwayatDonor.add({
+      'tempat': tempat,
+      'tgl': tanggal,
+      'nik': nik,
+      'berat': beratBadan,
+      'is_sehat': isSehat.toString(),
+      'tidak_obat': tidakMinumObat.toString(),
+      'tidak_hamil': tidakHamil.toString(),
+    });
     riwayatDonor.refresh();
+  }
+
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      final response = await Supabase.instance.client.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+      if (response.user != null) {
+        Get.snackbar(
+          "Berhasil",
+          "Password berhasil diubah",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Gagal mengubah password: ${e.toString()}",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 }

@@ -87,7 +87,7 @@ class _UserJadwalScreenState extends State<UserJadwalScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text("Jadwal Donor (Solo Raya)"),
+        title: const Text("Jadwal Donor"),
         centerTitle: true,
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,

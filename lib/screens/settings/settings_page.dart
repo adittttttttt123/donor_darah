@@ -44,11 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: "Ganti Password",
             subtitle: "Ubah kata sandi akun Anda",
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Fitur Ganti Password akan segera hadir"),
-                ),
-              );
+              _showChangePasswordDialog(context);
             },
           ),
           const SizedBox(height: 24),
@@ -84,7 +80,7 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildModernSettingItem(
             icon: Icons.info_outline_rounded,
             title: "Tentang Aplikasi",
-            subtitle: "Versi 1.0.0",
+            subtitle: "Versi 6(1.0.1)",
             onTap: () => _showAboutDialog(context),
           ),
           const SizedBox(height: 24),
@@ -251,6 +247,73 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    final TextEditingController passController = TextEditingController();
+    final TextEditingController confirmPassController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Ganti Password"),
+        content: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: passController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Password Baru",
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+                validator: (v) =>
+                    v!.length < 6 ? "Password minimal 6 karakter" : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: confirmPassController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Konfirmasi Password",
+                  prefixIcon: Icon(Icons.lock_reset),
+                ),
+                validator: (v) {
+                  if (v != passController.text) {
+                    return "Password tidak cocok";
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(context); // Close dialog first
+
+                try {
+                  final userController = Get.find<UserController>();
+                  await userController.updatePassword(passController.text);
+                } catch (e) {
+                  Get.snackbar("Error", "Controller tidak ditemukan");
+                }
+              }
+            },
+            child: const Text("Simpan"),
+          ),
+        ],
+      ),
     );
   }
 }
