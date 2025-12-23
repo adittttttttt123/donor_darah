@@ -56,6 +56,7 @@ class UserDetailBeritaScreen extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
+                          // ignore: deprecated_member_use
                           Colors.black.withOpacity(0.7),
                         ],
                       ),
@@ -67,6 +68,7 @@ class UserDetailBeritaScreen extends StatelessWidget {
             leading: Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
+                // ignore: deprecated_member_use
                 color: Colors.black.withOpacity(0.5),
                 shape: BoxShape.circle,
               ),

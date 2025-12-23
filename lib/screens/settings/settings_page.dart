@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/app_theme.dart';
 import '../../controllers/theme_controller.dart';
+import '../../controllers/user_controller.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
