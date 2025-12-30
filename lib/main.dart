@@ -30,7 +30,6 @@ import 'screens/admin/detail_pendonor_page.dart';
 
 // CONTROLLER
 import 'controllers/user_controller.dart';
-import 'controllers/theme_controller.dart';
 import 'package:get_storage/get_storage.dart';
 
 void main() async {
@@ -48,50 +47,44 @@ void main() async {
   }
 
   Get.put(UserController());
-  final themeController = Get.put(ThemeController()); // Put ThemeController
 
-  runApp(DonorDarahUserApp(themeController: themeController));
+  runApp(const DonorDarahUserApp());
 }
 
 class DonorDarahUserApp extends StatelessWidget {
-  final ThemeController themeController;
-  const DonorDarahUserApp({super.key, required this.themeController});
+  const DonorDarahUserApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return GetMaterialApp(
-        title: 'Donor Darah',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme, // Add Dark Theme
-        themeMode: themeController.themeMode, // Use Controller Mode
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const UserLoginScreen(),
-          '/user_register': (context) => const UserRegisterScreen(),
-          '/dashboard': (context) => const UserDashboardScreen(),
-          '/jadwal': (context) => const UserJadwalScreen(),
-          '/riwayat': (context) => const UserRiwayatScreen(),
-          '/profil': (context) => const UserProfilScreen(),
-          '/settings': (context) => const SettingsPage(),
-          '/daftar_donor': (context) => const UserDaftarDonorScreen(),
-          '/kartu_donor': (context) => const UserKartuDonorScreen(),
-          '/lokasi_unit': (context) => const UserLokasiUnitScreen(),
-          '/daftar_sukses': (context) => const UserDaftarSuksesScreen(),
-          '/riwayat_detail': (context) => const UserDetailRiwayatScreen(),
-          '/detail_berita': (context) => const UserDetailBeritaScreen(),
+    return GetMaterialApp(
+      title: 'Donor Darah',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const UserLoginScreen(),
+        '/user_register': (context) => const UserRegisterScreen(),
+        '/dashboard': (context) => const UserDashboardScreen(),
+        '/jadwal': (context) => const UserJadwalScreen(),
+        '/riwayat': (context) => const UserRiwayatScreen(),
+        '/profil': (context) => const UserProfilScreen(),
+        '/settings': (context) => const SettingsPage(),
+        '/daftar_donor': (context) => const UserDaftarDonorScreen(),
+        '/kartu_donor': (context) => const UserKartuDonorScreen(),
+        '/lokasi_unit': (context) => const UserLokasiUnitScreen(),
+        '/daftar_sukses': (context) => const UserDaftarSuksesScreen(),
+        '/riwayat_detail': (context) => const UserDetailRiwayatScreen(),
+        '/detail_berita': (context) => const UserDetailBeritaScreen(),
 
-          // ADMIN
-          '/admin_login': (context) => const LoginAdminPage(),
-          '/admin/dashboard': (context) => const DashboardAdminPage(),
-          '/admin/pendonor': (context) => const DataPendonorPage(),
-          '/admin/stok': (context) => const StokDarahPage(),
-          '/admin/jadwal': (context) => const JadwalDonorPage(),
-          '/admin/jadwal_form': (context) => const FormJadwalPage(),
-          '/admin/pendonor_detail': (context) => const DetailPendonorPage(),
-        },
-      );
-    });
+        // ADMIN
+        '/admin_login': (context) => const LoginAdminPage(),
+        '/admin/dashboard': (context) => const DashboardAdminPage(),
+        '/admin/pendonor': (context) => const DataPendonorPage(),
+        '/admin/stok': (context) => const StokDarahPage(),
+        '/admin/jadwal': (context) => const JadwalDonorPage(),
+        '/admin/jadwal_form': (context) => const FormJadwalPage(),
+        '/admin/pendonor_detail': (context) => const DetailPendonorPage(),
+      },
+    );
   }
 }

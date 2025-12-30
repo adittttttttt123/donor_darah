@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../core/app_theme.dart';
-import '../../controllers/theme_controller.dart';
 import '../../controllers/user_controller.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -48,26 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
               _showChangePasswordDialog(context);
             },
           ),
-          const SizedBox(height: 24),
-          _buildSectionHeader("Preferensi"),
-          const SizedBox(height: 12),
-          _buildModernSettingItem(
-            icon: Icons.dark_mode_outlined,
-            title: "Tema Gelap",
-            subtitle: "Sesuaikan tampilan aplikasi",
-            trailing: Obx(() {
-              // Get controller - ensure it's found (should be put in main)
-              final themeController = Get.find<ThemeController>();
-              return Switch(
-                value: themeController.isDarkMode,
-                activeThumbColor: AppTheme.primaryColor,
-                onChanged: (value) {
-                  themeController.toggleTheme();
-                },
-              );
-            }),
-            onTap: () {},
-          ),
+
           const SizedBox(height: 24),
           _buildSectionHeader("Dukungan"),
           const SizedBox(height: 12),

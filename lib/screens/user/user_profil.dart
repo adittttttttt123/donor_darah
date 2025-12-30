@@ -57,8 +57,18 @@ class UserProfilScreen extends StatelessWidget {
                             ),
                           ],
                           border: Border.all(color: Colors.grey.shade100),
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/logo_donor.jpg'),
+                          image: DecorationImage(
+                            image:
+                                (controller.currentUser.value.profileImage ??
+                                        '')
+                                    .isNotEmpty
+                                ? NetworkImage(
+                                    controller.currentUser.value.profileImage!,
+                                  )
+                                : const AssetImage(
+                                        'assets/images/logo_donor.jpg',
+                                      )
+                                      as ImageProvider,
                             fit: BoxFit.cover,
                           ),
                         ),

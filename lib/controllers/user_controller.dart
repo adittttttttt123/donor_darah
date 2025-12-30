@@ -1,3 +1,4 @@
+// ignore: unnecessary_import
 import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -158,6 +159,55 @@ class UserController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    }
+  }
+
+  // ignore: unused_element
+  Future<void> _handlePostLogin(User? user) async {
+    if (user != null) {
+      await fetchUserProfile();
+
+      // If profile is empty (new user via social login), insert it
+      if (currentUser.value.id.isEmpty || currentUser.value.nama.isEmpty) {
+        final newProfile = UserModel(
+          id: user.id,
+          nama:
+              user.userMetadata?['full_name'] ??
+              user.userMetadata?['name'] ??
+              user.email?.split('@')[0] ??
+              'User',
+          email: user.email ?? '',
+          noHp: '',
+          // profileImage: user.userMetadata?['avatar_url'] ?? user.userMetadata?['picture'] ?? '',
+          // We can add profile image if supported by model, model has profileImage
+        );
+
+        // Try to save this initial profile
+        try {
+          // Check if it really exists first? fetchUserProfile handles checking.
+          // If fetchUserProfile failed to find data, it sets local data but id might be set.
+          // Let's force upsert if we think it's new.
+
+          // A better check:
+          final existing = await Supabase.instance.client
+              .from('profiles')
+              .select()
+              .eq('id', user.id)
+              .maybeSingle();
+          if (existing == null) {
+            await Supabase.instance.client.from('profiles').insert({
+              'id': newProfile.id,
+              'nama': newProfile.nama,
+              'email': newProfile.email,
+              'no_hp': '', // Social login usually doesn't provide phone
+            });
+            // Refresh local data
+            await fetchUserProfile();
+          }
+        } catch (e) {
+          debugPrint("Error creating new social user profile: $e");
+        }
+      }
     }
   }
 }

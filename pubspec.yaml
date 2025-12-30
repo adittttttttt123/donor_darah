@@ -2,7 +2,7 @@ name: donor_darah
 description: Aplikasi Donor Darah berbasis Flutter
 publish_to: 'none'
 
-version: 1.0.1+8
+version: 1.0.1+9
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
@@ -22,6 +22,9 @@ dependencies:
 
   # Backend
   supabase_flutter: ^1.10.3
+  url_launcher: ^6.3.2
+  google_sign_in: ^6.2.1
+  font_awesome_flutter: ^10.7.0
 
 dependency_overrides:
   sign_in_with_apple: ^6.1.0

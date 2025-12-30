@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get/get.dart';
 import '../../controllers/user_controller.dart';
@@ -132,6 +131,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       }
     }
   }
+
+
 
   final _formKey = GlobalKey<FormState>(); // Added FormKey
 
@@ -287,51 +288,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                           ),
                           const SizedBox(height: 24),
 
-                          // Social Login
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Divider(color: Colors.grey.shade200),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Text(
-                                  "Atau masuk dengan",
-                                  style: TextStyle(
-                                    color: Colors.grey.shade500,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Divider(color: Colors.grey.shade200),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _socialButton(
-                                icon: Icons.g_mobiledata,
-                                color: Colors.red,
-                                label: "Google",
-                                onTap: () {},
-                              ),
-                              const SizedBox(width: 16),
-                              _socialButton(
-                                icon: Icons.apple,
-                                color: Colors.black,
-                                label: "Apple",
-                                onTap: () {},
-                              ),
-                            ],
-                          ),
-
-                          // ADMIN SHORTCUT REMOVED
-                          // Access via secret tap on logo only
                         ],
                       ),
                     ),
@@ -508,43 +464,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     );
   }
 
-  Widget _socialButton({
-    required IconData icon,
-    required Color color,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              // ignore: deprecated_member_use
-              color: Colors.grey.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
+
 }

@@ -282,6 +282,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24),
+
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
