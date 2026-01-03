@@ -67,3 +67,11 @@ android {
 flutter {
     source = "../.."
 }
+android {
+    // ...
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
