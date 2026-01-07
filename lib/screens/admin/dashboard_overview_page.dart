@@ -29,22 +29,9 @@ class DashboardOverviewPage extends StatelessWidget {
           _buildStatsGrid(width, controller),
           const SizedBox(height: 24),
           if (width > 1200)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 2, child: _buildStokTable(controller)),
-                const SizedBox(width: 24),
-                Expanded(flex: 1, child: _buildPendonorList(controller)),
-              ],
-            )
+            _buildPendonorList(controller)
           else
-            Column(
-              children: [
-                _buildStokTable(controller),
-                const SizedBox(height: 24),
-                _buildPendonorList(controller),
-              ],
-            ),
+            _buildPendonorList(controller),
           const SizedBox(height: 24),
           _buildJadwalList(controller),
         ],
@@ -57,7 +44,7 @@ class DashboardOverviewPage extends StatelessWidget {
   // I will remove it to clean up.
 
   Widget _buildStatsGrid(double screenWidth, DataController controller) {
-    int crossAxisCount = screenWidth > 1100 ? 4 : (screenWidth > 600 ? 2 : 1);
+    int crossAxisCount = screenWidth > 1100 ? 3 : (screenWidth > 600 ? 2 : 1);
 
     return Obx(
       () => GridView.count(
@@ -85,12 +72,7 @@ class DashboardOverviewPage extends StatelessWidget {
             icon: Icons.calendar_today,
             color: Colors.orange,
           ),
-          StatCard(
-            title: 'Total Stok',
-            value: controller.totalStok.toString(),
-            icon: Icons.local_hospital,
-            color: Colors.teal,
-          ),
+          // Total Stok Removed
         ],
       ),
     );
@@ -109,90 +91,7 @@ class DashboardOverviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStokTable(DataController controller) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildSectionHeader(
-              'Monitoring Stok Darah',
-              Icons.inventory,
-            ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Obx(
-                () => DataTable(
-                  headingRowHeight: 40,
-                  dataRowMinHeight: 40,
-                  dataRowMaxHeight: 52,
-                  columns: const [
-                    DataColumn(label: Text('Golongan')),
-                    DataColumn(label: Text('Jumlah')),
-                    DataColumn(label: Text('Status')),
-                  ],
-                  rows: controller.stokDarah.entries.map((e) {
-                    final status = e.value >= 20
-                        ? 'Aman'
-                        : (e.value >= 10 ? 'Menipis' : 'Kritis');
-                    final color = e.value >= 20
-                        ? Colors.green
-                        : (e.value >= 10 ? Colors.orange : Colors.red);
-
-                    return DataRow(
-                      cells: [
-                        DataCell(
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              e.key,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        DataCell(
-                          Text(
-                            '${e.value} Kantong',
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                        DataCell(
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.circle, size: 10, color: color),
-                              const SizedBox(width: 6),
-                              Text(
-                                status,
-                                style: TextStyle(
-                                  color: color,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // _buildStokTable Removed
 
   Widget _buildPendonorList(DataController controller) {
     return Card(

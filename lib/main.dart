@@ -23,7 +23,6 @@ import 'screens/user/user_detail_berita.dart';
 import 'screens/admin/login_admin_page.dart';
 import 'screens/admin/dashboard_admin_page.dart';
 import 'screens/admin/data_pendonor_page.dart';
-import 'screens/admin/stok_darah_page.dart';
 import 'screens/admin/jadwal_donor_page.dart';
 import 'screens/admin/form_jadwal_page.dart';
 import 'screens/admin/detail_pendonor_page.dart';
@@ -77,10 +76,10 @@ class DonorDarahUserApp extends StatelessWidget {
         '/detail_berita': (context) => const UserDetailBeritaScreen(),
 
         // ADMIN
+        // ADMIN
         '/admin_login': (context) => const LoginAdminPage(),
         '/admin/dashboard': (context) => const DashboardAdminPage(),
         '/admin/pendonor': (context) => const DataPendonorPage(),
-        '/admin/stok': (context) => const StokDarahPage(),
         '/admin/jadwal': (context) => const JadwalDonorPage(),
         '/admin/jadwal_form': (context) => const FormJadwalPage(),
         '/admin/pendonor_detail': (context) => const DetailPendonorPage(),

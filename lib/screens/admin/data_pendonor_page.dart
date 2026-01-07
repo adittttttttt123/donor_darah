@@ -10,29 +10,42 @@ class DataPendonorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<DataController>();
 
-    return Obx(
-      () => ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Search Bar
-          TextField(
-            decoration: InputDecoration(
-              hintText: "Cari pendonor...",
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+    return Scaffold(
+      body: Obx(
+        () => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Search Bar
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Cari pendonor...",
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // List contoh pendonor
-          ...controller.pendonorList.asMap().entries.map((entry) {
-            final index = entry.key;
-            final item = entry.value;
-            return _buildPendonorTile(context, index, item);
-          }),
-        ],
+            // List contoh pendonor
+            ...controller.pendonorList.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              return _buildPendonorTile(context, index, item);
+            }),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: Implement add donor dialog/form
+          Get.snackbar(
+            "Info",
+            "Fitur tambah pendonor manual akan segera hadir.",
+          );
+        },
+        backgroundColor: AppTheme.primaryColor,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

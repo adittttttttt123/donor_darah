@@ -144,12 +144,14 @@ class UserKartuDonorScreen extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(height: 4),
-                                      const Text(
-                                        "ID: 159982003", // Dummy ID
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 12,
-                                          letterSpacing: 2,
+                                      Obx(
+                                        () => Text(
+                                          "ID: ${controller.currentUser.value.nik}",
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                            letterSpacing: 2,
+                                          ),
                                         ),
                                       ),
                                     ],

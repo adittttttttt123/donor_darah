@@ -6,6 +6,7 @@ class UserModel {
   final String golDarah;
   final String tglLahir;
   final String alamat;
+  final String nik; // Add NIK field
   final String?
   profileImage; // Optional, defaults can be handled in UI or Controller
 
@@ -14,6 +15,7 @@ class UserModel {
     required this.nama,
     required this.email,
     required this.noHp,
+    this.nik = '-', // Default value
     this.golDarah = '-',
     this.tglLahir = '-',
     this.alamat = '-',
@@ -26,6 +28,7 @@ class UserModel {
       nama: json['nama'] as String? ?? '',
       email: json['email'] as String? ?? '',
       noHp: json['no_hp'] as String? ?? '',
+      nik: json['nik'] as String? ?? '-', // Map NIK
       golDarah: json['gol_darah'] as String? ?? '-',
       tglLahir: json['tgl_lahir'] as String? ?? '-',
       alamat: json['alamat'] as String? ?? '-',
@@ -39,6 +42,7 @@ class UserModel {
       'nama': nama,
       'email': email,
       'no_hp': noHp,
+      'nik': nik, // Serialize NIK
       'gol_darah': golDarah,
       'tgl_lahir': tglLahir,
       'alamat': alamat,
@@ -55,6 +59,7 @@ class UserModel {
     String? nama,
     String? email,
     String? noHp,
+    String? nik,
     String? golDarah,
     String? tglLahir,
     String? alamat,
@@ -65,6 +70,7 @@ class UserModel {
       nama: nama ?? this.nama,
       email: email ?? this.email,
       noHp: noHp ?? this.noHp,
+      nik: nik ?? this.nik, // Support copyWith for NIK
       golDarah: golDarah ?? this.golDarah,
       tglLahir: tglLahir ?? this.tglLahir,
       alamat: alamat ?? this.alamat,

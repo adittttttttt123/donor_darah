@@ -4,7 +4,7 @@ import '../../core/app_theme.dart';
 import '../../controllers/data_controller.dart';
 import 'dashboard_overview_page.dart';
 import 'data_pendonor_page.dart';
-import 'stok_darah_page.dart';
+// import 'stok_darah_page.dart';
 import 'jadwal_donor_page.dart';
 
 class DashboardAdminPage extends StatefulWidget {
@@ -22,41 +22,14 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
   final List<Widget> _pages = [
     const DashboardOverviewPage(),
     const DataPendonorPage(),
-    const StokDarahPage(),
     const JadwalDonorPage(),
   ];
 
   final List<String> _titles = [
     "Dashboard Admin",
     "Data Pendonor",
-    "Stok Darah",
     "Jadwal Donor",
   ];
-
-  void _showSeedDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Generate Data Dummy"),
-        content: const Text(
-          "Apakah Anda yakin ingin mengisi database dengan data dummy? Ini akan menambahkan 20 pendonor dan 10 jadwal.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Batal"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              controller.seedDatabase();
-            },
-            child: const Text("Ya, Isi Data"),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +43,6 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-          const SizedBox(width: 8),
-          if (_selectedIndex == 0) // Only show seed on Dashboard
-            IconButton(
-              onPressed: () => _showSeedDialog(context),
-              tooltip: "Isi Data Dummy",
-              icon: const Icon(Icons.storage, color: Colors.white),
-            ),
           const SizedBox(width: 8),
           const CircleAvatar(
             backgroundColor: Colors.white24,
@@ -125,8 +91,12 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
           const SizedBox(height: 12),
           _sidebarItem(0, Icons.dashboard, 'Dashboard'),
           _sidebarItem(1, Icons.people, 'Data Pendonor'),
-          _sidebarItem(2, Icons.inventory_2, 'Stok Darah'),
-          _sidebarItem(3, Icons.event, 'Jadwal Donor'),
+          // Stok Darah Removed
+          _sidebarItem(
+            2,
+            Icons.event,
+            'Jadwal Donor',
+          ), // Adjusted index to match list
           const Spacer(),
           const Divider(),
           ListTile(
