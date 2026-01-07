@@ -37,13 +37,10 @@ class DataPendonorPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement add donor dialog/form
-          Get.snackbar(
+        onPressed: () => Get.snackbar(
             "Info",
             "Fitur tambah pendonor manual akan segera hadir.",
-          );
-        },
+          ),
         backgroundColor: AppTheme.primaryColor,
         child: const Icon(Icons.add, color: Colors.white),
       ),
