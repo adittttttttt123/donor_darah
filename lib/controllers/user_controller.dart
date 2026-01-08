@@ -112,13 +112,39 @@ class UserController extends GetxController {
     }
   }
 
+  Future<void> updateNik(String newNik) async {
+    final oldUser = currentUser.value;
+    if (oldUser.nik == newNik) return;
+
+    final newUser = oldUser.copyWith(nik: newNik);
+    currentUser.value = newUser;
+
+    try {
+      await Supabase.instance.client.from('profiles').upsert({
+        'id': newUser.id,
+        'nik': newNik,
+        // We only update NIK and ID to merge, or we should send all data?
+        // Supabase upsert merge by default if primary key matches.
+        // It's safer to just send the fields we want to update if we are sure,
+        // but 'profiles' might require other fields?
+        // Let's use the full toJson to be safe and consistent with updateProfile
+        ...newUser.toJson(),
+      });
+      // Silent success or debug log
+      debugPrint("NIK updated to $newNik");
+    } catch (e) {
+      debugPrint("Failed to update NIK: $e");
+      // Optional: Revert local state if critical
+    }
+  }
+
   void clearData() {
     currentUser.value = UserModel.empty();
     profileImageBytes.value = null;
     riwayatDonor.clear();
   }
 
-  void addRiwayat({
+  Future<void> addRiwayat({
     required String tempat,
     required String tanggal,
     required String nik,
@@ -126,7 +152,8 @@ class UserController extends GetxController {
     required bool isSehat,
     required bool tidakMinumObat,
     required bool tidakHamil,
-  }) {
+  }) async {
+    // 1. Update Local State
     riwayatDonor.add({
       'tempat': tempat,
       'tgl': tanggal,
@@ -137,6 +164,44 @@ class UserController extends GetxController {
       'tidak_hamil': tidakHamil.toString(),
     });
     riwayatDonor.refresh();
+
+    // 2. Persist to Supabase
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      final user = Supabase.instance.client.auth.currentUser;
+
+      if (user != null) {
+        // Debugging logs
+        // ignore: avoid_print
+        print("Inserting donor history for user: ${user.id}");
+        // ignore: avoid_print
+        print("Data: NIK=$nik, Lokasi=$tempat");
+
+        await Supabase.instance.client.from('donor_history').insert({
+          'user_id': user.id,
+          'nama': currentUser.value.nama, // Added as per request
+          'nik': nik,
+          'lokasi': tempat,
+          'tanggal': tanggal,
+          'berat_badan': beratBadan,
+          'is_sehat': isSehat,
+          'tidak_minum_obat': tidakMinumObat,
+          'tidak_hamil': tidakHamil,
+        });
+        Get.snackbar("Sukses", "Riwayat donor berhasil disimpan ke database");
+      } else {
+        // ignore: avoid_print
+        print("User is null. Session: $session");
+        Get.snackbar(
+          "Error",
+          "Gagal menyimpan: Anda belum login atau sesi habis.",
+        );
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print("Error adding donor history: $e");
+      Get.snackbar("Error Fatal", "DB Error: $e");
+    }
   }
 
   Future<void> updatePassword(String newPassword) async {

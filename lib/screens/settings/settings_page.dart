@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/user_controller.dart';
+import '../../controllers/data_controller.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -64,6 +65,17 @@ class _SettingsPageState extends State<SettingsPage> {
             onTap: () => _showAboutDialog(context),
           ),
           const SizedBox(height: 24),
+          _buildModernSettingItem(
+            icon: Icons.cloud_upload_rounded,
+            title: "Muat Data Awal",
+            subtitle: "Isi database dengan jadwal asli (jika kosong)",
+            iconColor: Colors.blueAccent,
+            onTap: () async {
+              final controller = Get.put(DataController()); // Ensure found
+              await controller.seedJadwal();
+            },
+          ),
+          const SizedBox(height: 12),
           _buildModernSettingItem(
             icon: Icons.logout_rounded,
             title: "Keluar Akun",
