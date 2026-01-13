@@ -42,13 +42,14 @@ class UserModel {
       'nama': nama,
       'email': email,
       'no_hp': noHp,
-      'nik': nik, // Serialize NIK
+      // 'nik': nik, // NIK removed from profiles table
       'gol_darah': golDarah,
       'tgl_lahir': tglLahir,
       'alamat': alamat,
       'profile_image': profileImage,
     };
   }
+  // Removed extra brace
 
   static UserModel empty() {
     return UserModel(id: '', nama: '', email: '', noHp: '');

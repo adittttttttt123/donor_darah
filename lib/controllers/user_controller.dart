@@ -48,6 +48,8 @@ class UserController extends GetxController {
         // ignore: avoid_print
         print("Error fetching profile: $e");
       }
+      // Retrieve history
+      await fetchDonorHistory();
     }
   }
 
@@ -113,29 +115,15 @@ class UserController extends GetxController {
   }
 
   Future<void> updateNik(String newNik) async {
+    // We update local state so the UI reflects it immediately
     final oldUser = currentUser.value;
     if (oldUser.nik == newNik) return;
 
     final newUser = oldUser.copyWith(nik: newNik);
     currentUser.value = newUser;
 
-    try {
-      await Supabase.instance.client.from('profiles').upsert({
-        'id': newUser.id,
-        'nik': newNik,
-        // We only update NIK and ID to merge, or we should send all data?
-        // Supabase upsert merge by default if primary key matches.
-        // It's safer to just send the fields we want to update if we are sure,
-        // but 'profiles' might require other fields?
-        // Let's use the full toJson to be safe and consistent with updateProfile
-        ...newUser.toJson(),
-      });
-      // Silent success or debug log
-      debugPrint("NIK updated to $newNik");
-    } catch (e) {
-      debugPrint("Failed to update NIK: $e");
-      // Optional: Revert local state if critical
-    }
+    // We NO LONGER save to 'profiles'. The NIK is now transactional per donation (in donor_history/pendonor).
+    // However, for UX, we keep it in the local model so it pre-fills.
   }
 
   void clearData() {
@@ -144,65 +132,53 @@ class UserController extends GetxController {
     riwayatDonor.clear();
   }
 
-  Future<void> addRiwayat({
-    required String tempat,
-    required String tanggal,
-    required String nik,
-    required String beratBadan,
-    required bool isSehat,
-    required bool tidakMinumObat,
-    required bool tidakHamil,
-  }) async {
-    // 1. Update Local State
-    riwayatDonor.add({
-      'tempat': tempat,
-      'tgl': tanggal,
-      'nik': nik,
-      'berat': beratBadan,
-      'is_sehat': isSehat.toString(),
-      'tidak_obat': tidakMinumObat.toString(),
-      'tidak_hamil': tidakHamil.toString(),
-    });
-    riwayatDonor.refresh();
+  // Function addRiwayat removed as we now use clean single source 'pendonor' via DataController
 
-    // 2. Persist to Supabase
+  Future<void> fetchDonorHistory() async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
+    // We now rely on user_id to fetch history, which is persistent.
     try {
-      final session = Supabase.instance.client.auth.currentSession;
-      final user = Supabase.instance.client.auth.currentUser;
+      final response = await Supabase.instance.client
+          .from('pendonor')
+          .select()
+          .eq('user_id', user.id) // Query by user_id
+          .order('terakhir', ascending: false);
 
-      if (user != null) {
-        // Debugging logs
-        // ignore: avoid_print
-        print("Inserting donor history for user: ${user.id}");
-        // ignore: avoid_print
-        print("Data: NIK=$nik, Lokasi=$tempat");
+      final List<dynamic> data = response as List<dynamic>;
 
-        await Supabase.instance.client.from('donor_history').insert({
-          'user_id': user.id,
-          'nama': currentUser.value.nama, // Added as per request
-          'nik': nik,
-          'lokasi': tempat,
-          'tanggal': tanggal,
-          'berat_badan': beratBadan,
-          'is_sehat': isSehat,
-          'tidak_minum_obat': tidakMinumObat,
-          'tidak_hamil': tidakHamil,
-        });
-        Get.snackbar("Sukses", "Riwayat donor berhasil disimpan ke database");
-      } else {
-        // ignore: avoid_print
-        print("User is null. Session: $session");
-        Get.snackbar(
-          "Error",
-          "Gagal menyimpan: Anda belum login atau sesi habis.",
-        );
+      // If we found history, we can auto-restore the NIK for the session
+      if (data.isNotEmpty) {
+        final latestNik = (data.first['nik'] ?? '').toString();
+        if (latestNik.isNotEmpty &&
+            latestNik != '-' &&
+            currentUser.value.nik != latestNik) {
+          currentUser.value = currentUser.value.copyWith(nik: latestNik);
+        }
       }
+
+      // final List<dynamic> data = response as List<dynamic>; // Removed duplicate
+
+      riwayatDonor.assignAll(
+        data.map((e) {
+          return {
+            'tempat': (e['lokasi'] ?? '-').toString(),
+            'tgl': (e['terakhir'] ?? '-').toString(),
+            'nik': (e['nik'] ?? '-').toString(),
+            'berat': (e['berat_badan'] ?? '-').toString(),
+            'is_sehat': (e['is_sehat'] ?? true).toString(),
+            'tidak_obat': (e['tidak_minum_obat'] ?? true).toString(),
+            'tidak_hamil': (e['tidak_hamil'] ?? true).toString(),
+          };
+        }).toList(),
+      );
     } catch (e) {
-      // ignore: avoid_print
-      print("Error adding donor history: $e");
-      Get.snackbar("Error Fatal", "DB Error: $e");
+      debugPrint("Error fetching donor history: $e");
     }
   }
+
+  // seedDonorHistory removed as per request
 
   Future<void> updatePassword(String newPassword) async {
     try {

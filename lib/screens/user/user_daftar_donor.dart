@@ -32,8 +32,10 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
     final userController = Get.find<UserController>();
     // Check if user already has a NIK
     // Note: You need to make sure 'currentUser' is populated or 'updateNik' updates the local model immediately
-    if (userController.currentUser.value.nik.isNotEmpty) {
-      _nikController.text = userController.currentUser.value.nik;
+    // Check if user already has a NIK and it's not the default '-'
+    final nik = userController.currentUser.value.nik;
+    if (nik.isNotEmpty && nik != '-') {
+      _nikController.text = nik;
     }
   }
 
@@ -50,9 +52,9 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine if NIK is locked
-    final userController = Get.find<UserController>();
-    final bool isNikLocked = userController.currentUser.value.nik.isNotEmpty;
+    // Determine if NIK is locked (Logic removed as requested)
+    // final userController = Get.find<UserController>(); // Unused in build
+    // final bool isNikLocked = userController.currentUser.value.nik.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -130,21 +132,13 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
                 controller: _nikController,
                 keyboardType: TextInputType.number,
                 maxLength: 16,
-                readOnly: isNikLocked, // Lock if already has NIK
-                style: isNikLocked ? const TextStyle(color: Colors.grey) : null,
-                decoration: InputDecoration(
+                readOnly: false,
+                decoration: const InputDecoration(
                   labelText: "NIK (KTP)",
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.credit_card),
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.credit_card),
                   counterText: "",
-                  filled: isNikLocked,
-                  fillColor: isNikLocked ? Colors.grey.shade200 : null,
-                  suffixIcon: isNikLocked
-                      ? const Icon(Icons.lock, color: Colors.grey)
-                      : null,
-                  helperText: isNikLocked
-                      ? "NIK terikat dengan akun Anda (Tidak dapat diubah)"
-                      : null,
+                  helperText: "Pastikan NIK sesuai KTP",
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -278,23 +272,24 @@ class _UserDaftarDonorScreenState extends State<UserDaftarDonorScreen> {
       // Update NIK in User Profile
       await userController.updateNik(_nikController.text);
 
-      // Add to global state (Admin Dashboard)
+      // Add to global state (Admin Dashboard) and Personal History (Pendonor Table)
       await dataController.addPendonor(
-        userController.currentUser.value.nama,
-        userController.currentUser.value.golDarah,
-        tanggal,
-      );
-
-      // Add to personal history with details
-      await userController.addRiwayat(
-        tempat: lokasi,
+        nama: userController.currentUser.value.nama,
+        gol: userController.currentUser.value.golDarah,
         tanggal: tanggal,
         nik: _nikController.text,
+        lokasi: lokasi,
         beratBadan: _beratBadanController.text,
         isSehat: _isSehat,
         tidakMinumObat: _tidakMinumObat,
         tidakHamil: _tidakHamil,
+        userId: userController.currentUser.value.id, // Pass user ID
       );
+
+      // Refresh history immediately so the NIK is used to fetch the new data
+      await userController.fetchDonorHistory();
+
+      // Removed userController.addRiwayat(); // redundant now
 
       Navigator.pushNamed(
         // ignore: use_build_context_synchronously

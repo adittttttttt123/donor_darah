@@ -67,12 +67,30 @@ class DataController extends GetxController {
   // --- Data Pendonor ---
   var pendonorList = <Map<String, String>>[].obs;
 
-  Future<void> addPendonor(String nama, String gol, String tanggal) async {
+  Future<void> addPendonor({
+    required String nama,
+    required String gol,
+    required String tanggal,
+    required String nik,
+    required String lokasi,
+    required String beratBadan,
+    required bool isSehat,
+    required bool tidakMinumObat,
+    required bool tidakHamil,
+    required String? userId, // Add user_id
+  }) async {
     try {
       await _supabase.from('pendonor').insert({
         'nama': nama,
         'golongan': gol,
         'terakhir': tanggal,
+        'nik': nik,
+        'lokasi': lokasi,
+        'berat_badan': beratBadan,
+        'is_sehat': isSehat,
+        'tidak_minum_obat': tidakMinumObat,
+        'tidak_hamil': tidakHamil,
+        'user_id': userId, // Insert user_id
       });
       // Refresh list
       fetchData();
