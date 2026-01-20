@@ -146,7 +146,7 @@ class UserKartuDonorScreen extends StatelessWidget {
                                       const SizedBox(height: 4),
                                       Obx(
                                         () => Text(
-                                          "ID: ${controller.currentUser.value.nik}",
+                                          "NIK: ${controller.currentUser.value.nik}",
                                           style: const TextStyle(
                                             color: Colors.white70,
                                             fontSize: 12,
@@ -198,7 +198,7 @@ class UserKartuDonorScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 2),
                                     const Text(
-                                      "12/2024",
+                                      "12/2025",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
